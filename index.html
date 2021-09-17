@@ -6,44 +6,110 @@
       body {
           font: 10px sans-serif;
       }
+
       .linage {
           fill: none;
           stroke: #000;
       }
+
       .marriage {
           fill: none;
           stroke: black;
       }
+
       .man {
           background-color: lightblue;
           border-style: solid;
           border-width: 1px;
           box-sizing: border-box;
       }
+
       .woman {
           background-color: salmon;
           border-style: solid;
           border-width: 1px;
           box-sizing: border-box;
       }
-      .emphasis{
+
+      .emphasis {
           font-style: italic;
       }
+
       p {
         padding:0;
         margin:0;
       }
+
       svg {
         border-style: solid;
         border-width: 1px;
+        height: 100%;
+        width: 100%;
+      }
+
+      .w100 {
+        width: 100%;
+      }
+
+      .h100 {
+        height: 100%;
+      }
+
+      .menu {
+        position: absolute;
+        height: 5%;
+        top: 0;
+        left: 0;
+      }
+
+      .main {
+        position: absolute;
+        height: 95%;
+        left: 0;
+        top: 5%;
+        cursor: default;
+      }
+
+      .hidden {
+        visibility: hidden;
+      }
+
+      .visible {
+        visibility: visible;
+      }
+
+      #graph {
+        width: 80%;
+      }
+
+      #editForm {
+        position: absolute;
+        left: 80%;
+        top: 0;
+        width: 20%;
+        display: grid;
       }
     </style>
   </head>
   <body>
-    <input type="file" id="selectFile" value="Open"/>
-    <button id="loadTree">Load tree</button>
+    <div class="menu w100">
+      <input type="file" id="selectFile" value="Open"/>
+      <button id="loadTree">Load tree</button>
+    </div>
 
-    <div id="graph"></div>
+    <div class="main w100">
+      <div id="graph" class="h100"></div>
+
+      <div id="editForm" class="hidden">
+        <label for="name">Name</label>
+        <input type="text" id="name" readonly>
+  
+        <label for="surname">Surname</label>
+        <input type="text" id="surname" readonly>
+  
+        <button>Save</button>
+      </div>
+    </div>
 
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
@@ -86,20 +152,16 @@
           height: 800,
           width: 1200,
           callbacks: {
-            nodeClick: function(name, extra) {
-              console.log(name);
+            nodeClick: function(name, extra, id) {
+              document.getElementById('editForm').classList.add('visible');
+              document.getElementById('name').value = name;
             },
             textRenderer: function(name, extra, textClass) {
-              // THis callback is optinal but can be used to customize
-              // how the text is rendered without having to rewrite the entire node
-              // from scratch.
               if (extra && extra.nickname)
                 name = name + " (" + extra.nickname + ")";
               return "<p align='center' class='" + textClass + "'>" + name + "</p>";
             },
             nodeRenderer: function(name, x, y, height, width, extra, id, nodeClass, textClass, textRenderer) {
-              // This callback is optional but can be used to customize the
-              // node element using HTML.
               let node = '';
               node += '<div ';
               node += 'style="height:100%;width:100%;" ';
