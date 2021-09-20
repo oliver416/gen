@@ -106,6 +106,39 @@
   
         <label for="surname">Surname</label>
         <input type="text" id="surname" readonly>
+
+        <label for="patronymic">Patronymic</label>
+        <input type="text" id="patronymic" readonly>
+
+        <label for="maidenname">Maidenname</label>
+        <input type="text" id="maidenname" readonly>
+
+        <label for="birthdate">Birthdate</label>
+        <input type="text" id="birthdate" readonly>
+
+        <label for="deathdate">Deathdate</label>
+        <input type="text" id="deathdate" readonly>
+
+        <label for="birthplace">Birthplace</label>
+        <textarea id="birthplace" readonly></textarea>
+
+        <label for="religion">Religion</label>
+        <input type="text" id="religion" readonly>
+
+        <label for="nationality">Nationality</label>
+        <input type="text" id="nationality" readonly>
+
+        <label for="education">Education</label>
+        <textarea id="education" readonly></textarea>
+
+        <label for="occupation">Occupation</label>
+        <textarea id="occupation" readonly></textarea>
+
+        <label for="biography">Biography</label>
+        <textarea id="biography" readonly></textarea>
+
+        <label for="cemetery">Cemetery</label>
+        <textarea id="cemetery" readonly></textarea>
   
         <button>Save</button>
       </div>
@@ -116,8 +149,7 @@
     <script src="https://cdn.jsdelivr.net/npm/d3-dtree/dist/dTree.min.js"></script>
     
     <script>
-      let loadButton = document.getElementById('loadTree');
-      loadButton.addEventListener('click', loadFile);
+      document.getElementById('loadTree').addEventListener('click', loadFile);
 
       function loadFile() {
         if (typeof window.FileReader !== 'function') {
@@ -153,12 +185,33 @@
           width: 1200,
           callbacks: {
             nodeClick: function(name, extra, id) {
-              document.getElementById('editForm').classList.add('visible');
-              document.getElementById('name').value = name;
+              let form = document.getElementById('editForm');
+              
+              clearForm(form);
+
+              form.classList.add('visible');
+
+              fillForm(name, extra);
             },
             textRenderer: function(name, extra, textClass) {
-              if (extra && extra.nickname)
-                name = name + " (" + extra.nickname + ")";
+              if (extra) {
+                if (extra.surname) {
+                  name = `${name} ${extra.surname}`;
+                }                
+
+                if (extra.maidenname) {
+                  name = `${name} (${extra.maidenname})`;
+                }
+
+                if (extra.birthdate) {
+                  name = `${name} (${extra.birthdate})`;
+                }
+
+                if (extra.deathdate) {
+                  name = `${name.slice(0, -1)}-${extra.deathdate})`;
+                }
+              }
+
               return "<p align='center' class='" + textClass + "'>" + name + "</p>";
             },
             nodeRenderer: function(name, x, y, height, width, extra, id, nodeClass, textClass, textRenderer) {
@@ -173,6 +226,23 @@
           }
           }
         });
+      }
+
+      function clearForm(form) {
+        let nodes = form.querySelectorAll('input, textarea');
+        for (let node of nodes) {
+          node.value = '';
+        }
+      }
+
+      function fillForm(name, data) {
+        document.getElementById('name').value = name;
+
+        if (data) {
+          for (let key in data) {
+            document.getElementById(key).value = data[key];
+          }
+        }
       }
     </script>
   </body>

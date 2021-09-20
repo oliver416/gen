@@ -7,7 +7,18 @@
             "name": "Helen",
             "class": "woman",
             "extra": {
-              "nickname": "Hell"
+              "surname": "Hell",
+              "patronymic": null,
+              "maidenname": "Buiova",
+              "birthdate": "01.01.1950",
+              "deathdate": "01.01.1990",
+              "birthplace": "Moscow, Russian Federation",
+              "religion": "ortodox (baptized)",
+              "nationality": "Russian",
+              "education": "Moscow high school 1960-1970",
+              "occupation": "Economist",
+              "biography": "-",
+              "cemetery": "Vagankovskoe cemetery, st.10, p.17"
             }
           },
           "children": [{
