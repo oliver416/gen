@@ -140,16 +140,23 @@
         <label for="cemetery">Cemetery</label>
         <textarea id="cemetery" readonly></textarea>
   
-        <button>Save</button>
+        <button id="editButton">Edit</button>
+        <button id="addButton" class="hidden">Add</button>
+        <button id="exportButton" class="hidden">Export</button>
       </div>
     </div>
 
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-dtree/dist/dTree.min.js"></script>
+    <!-- Possible improvement: https://github.com/eligrey/FileSaver.js -->
     
     <script>
+      let treeData, baseName;
+
       document.getElementById('loadTree').addEventListener('click', loadFile);
+      document.getElementById('exportButton').addEventListener('click', saveFile);
+      document.getElementById('editButton').addEventListener('click', editForm);
 
       function loadFile() {
         if (typeof window.FileReader !== 'function') {
@@ -161,15 +168,15 @@
           return;
         }
         else {
+          let file = input.files[0]
           let file_reader = new FileReader();
           file_reader.onload = receivedText;
-          file_reader.readAsText(input.files[0]);
+          file_reader.readAsText(file);
+          baseName = file.name;
         }
       }
 
       function receivedText(e) {
-        let treeData;
-
         try {
           treeData = JSON.parse(e.target.result);
         } catch {
@@ -187,11 +194,11 @@
             nodeClick: function(name, extra, id) {
               let form = document.getElementById('editForm');
               
-              clearForm(form);
-
               form.classList.add('visible');
-
+              
+              clearForm(form);
               fillForm(name, extra);
+              blockForm(form, true);
             },
             textRenderer: function(name, extra, textClass) {
               if (extra) {
@@ -230,6 +237,7 @@
 
       function clearForm(form) {
         let nodes = form.querySelectorAll('input, textarea');
+
         for (let node of nodes) {
           node.value = '';
         }
@@ -242,6 +250,51 @@
           for (let key in data) {
             document.getElementById(key).value = data[key];
           }
+        }
+      }
+
+      function editForm() {
+        let form = document.getElementById('editForm');
+        
+        blockForm(form, false);
+        showExportButton(true);
+      }
+
+      function blockForm(form, isBlocked) {
+        let nodes = form.querySelectorAll('input, textarea');
+
+        for (let node of nodes) {
+          node.readOnly = isBlocked;
+        }
+      }
+
+      function showExportButton(isVisible) {
+        let button = document.getElementById('exportButton');
+        
+        button.removeAttribute('class');
+        button.classList.add(isVisible ? 'visible': 'hidden');
+      }
+
+      function saveForm() {
+
+      }
+
+      function saveFile() {
+        var file = new Blob([JSON.stringify(treeData)], {type: 'text/json'});
+        if (window.navigator.msSaveOrOpenBlob) // IE10+
+            window.navigator.msSaveOrOpenBlob(file, baseName);
+        else { // Others
+            let link = document.createElement('a');
+            let url = URL.createObjectURL(file);
+            
+            link.href = url;
+            link.download = baseName;
+            document.body.appendChild(link);
+            link.click();
+            setTimeout(function() {
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);  
+            }, 0); 
         }
       }
     </script>
