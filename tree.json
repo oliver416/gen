@@ -2,11 +2,15 @@
         "name": "Niclas Superlongsurname",
         "class": "man",
         "textClass": "emphasis",
+        "extra": {
+          "id": 1
+        },
         "marriages": [{
           "spouse": {
             "name": "Helen",
             "class": "woman",
             "extra": {
+              "id": 2,
               "surname": "Hell",
               "patronymic": null,
               "maidenname": "Buiova",
