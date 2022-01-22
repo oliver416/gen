@@ -176,9 +176,72 @@
         }
       }
 
+      function arrayToTree(array) {
+        function findParentNode(tree, nodeId) {
+          for (let node of tree) {
+            if (
+                nodeId === node['id'] || 
+                nodeId === node['spouse'] || 
+                nodeId === node
+              ) {
+              return node;
+            }
+
+            let marriages = node['marriages'];
+            let children = node['children'];
+
+            if (marriages) {
+              return findParentNode(marriages, nodeId);
+            }
+
+            if (children && children.includes(nodeId)) {
+              return node;
+            } else {
+              return findParentNode(children, nodeId);
+            }
+          }
+        }
+
+        function addNode(parentNode, node) {
+          let nodeId = node['id'];    
+          let spouse = parentNode['spouse'];
+          let children = parentNode['children'];   
+          
+          if (spouse === nodeId) {
+            parentNode['spouse'] = node;
+            return;
+          }
+
+          if (children) {
+              for (child of children) {
+                if (child === nodeId) {
+                  parentNode['children'][children.indexOf(child)] = node;
+                  return;
+                }
+              }
+            }
+        }
+
+        let tree;
+        for (let node of array) {
+          if (!tree){
+            tree = [node];
+            continue;
+          }
+
+          let nodeId = node['id'];
+          
+          parentNode = findParentNode(tree, nodeId);
+          addNode(parentNode, node);
+        }
+
+        return tree;
+      }
+
       function receivedText(e) {
         try {
           treeData = JSON.parse(e.target.result);
+          treeData = arrayToTree(treeData);
         } catch {
           return;
         }
