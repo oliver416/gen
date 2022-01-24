@@ -100,7 +100,7 @@
     <div class="main w100">
       <div id="graph" class="h100"></div>
 
-      <div id="editForm" class="hidden">
+      <div id="editForm" class="visible">
         <label for="name">Name</label>
         <input type="text" id="name" readonly>
   
@@ -112,6 +112,13 @@
 
         <label for="maidenname">Maidenname</label>
         <input type="text" id="maidenname" readonly>
+
+        <label for="gender">Gender</label> 
+        <input type="radio" id="man" name="gender" value="man">
+        <label for="man">Male</label>
+
+        <input type="radio" id="woman" name="gender" value="woman">
+        <label for="man">Female</label>
 
         <label for="birthdate">Birthdate</label>
         <input type="text" id="birthdate" readonly>
@@ -149,16 +156,19 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-dtree/dist/dTree.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
     <!-- Possible improvement: https://github.com/eligrey/FileSaver.js -->
     
     <script>
-      let treeData, baseName;
+      let familyDB = [];
+      let baseName;
 
       document.getElementById('loadTree').addEventListener('click', loadFile);
-      document.getElementById('exportButton').addEventListener('click', saveFile);
       document.getElementById('editButton').addEventListener('click', editForm);
+      document.getElementById('addButton').addEventListener('click', addPerson);
+      document.getElementById('exportButton').addEventListener('click', saveFile);
 
-      loadTree([]);
+      loadTree(familyDB);
 
       function loadTree(tree) {
         document.getElementById('graph').innerHTML = '';
@@ -172,8 +182,7 @@
             nodeClick: function(name, extra, id) {
               let form = document.getElementById('editForm');
               
-              form.classList.add('visible');
-              
+              showElement(form, true);
               clearForm(form);
               fillForm(name, extra);
               blockForm(form, true);
@@ -295,13 +304,18 @@
 
       function receivedText(e) {
         try {
-          treeData = JSON.parse(e.target.result);
-          treeData = arrayToTree(treeData);
+          let familyDB = JSON.parse(e.target.result);
+          let tree = arrayToTree(familyDB);
+          loadTree(tree);
         } catch {
           return;
         }
-
-        loadTree(treeData);
+        
+      }
+      
+      function showElement(element, isVisible) {
+          element.removeAttribute('class');
+          element.classList.add(isVisible ? 'visible': 'hidden');
       }
 
       function clearForm(form) {
@@ -324,9 +338,12 @@
 
       function editForm() {
         let form = document.getElementById('editForm');
+        let addButton = document.getElementById('addButton');
+        let editButton = document.getElementById('editButton');
         
         blockForm(form, false);
-        showExportButton(true);
+        showElement(addButton, true);
+        showElement(editButton, false);
       }
 
       function blockForm(form, isBlocked) {
@@ -337,19 +354,67 @@
         }
       }
 
-      function showExportButton(isVisible) {
-        let button = document.getElementById('exportButton');
-        
-        button.removeAttribute('class');
-        button.classList.add(isVisible ? 'visible': 'hidden');
+      function extractFormData(form) {
+        let inputs = form.getElementsByTagName('input');
+        let textareas = form.getElementsByTagName('textarea');
+      
+        let attributes = {}
+
+        for (let input of inputs) {
+          if (input.id === 'man' || input.id === 'woman') { 
+            if (input.checked) {
+              attributes['gender'] = input.value;
+            }
+            continue;
+          }
+
+          attributes[input.id] = input.value;
+        }
+
+        for (let textarea of textareas) {
+          attributes[textarea.id] = textarea.value;
+        }
+
+        return attributes;
       }
 
-      function saveForm() {
+      function addPerson() {
+        // todo: refactor such variables
+        let form = document.getElementById('editForm');
+        let addButton = document.getElementById('addButton');
+        let editButton = document.getElementById('editButton');
+        
+        let attributes = extractFormData(form);
+        let name = attributes['name'] ? attributes['name'] : 'Unknown';
+        let gender = attributes['gender'] ? attributes['gender']: 'man';
+        
+        let extra = {};
 
+        for (let key in attributes) {
+          if (key === 'name' || key === 'gender') {
+            continue;
+          }
+
+          extra[key] = attributes[key];
+        }
+
+        let person = {
+          "id": uuidv4(),
+          "name": name,
+          "class": gender,
+          "extra": extra,
+        }
+
+        familyDB.push(person);
+        let tree = arrayToTree(familyDB);
+        loadTree(tree);
+
+        showElement(addButton, false);
+        showElement(editButton, true);
       }
 
       function saveFile() {
-        var file = new Blob([JSON.stringify(treeData)], {type: 'text/json'});
+        var file = new Blob([JSON.stringify(familyDB)], {type: 'text/json'});
         if (window.navigator.msSaveOrOpenBlob) // IE10+
             window.navigator.msSaveOrOpenBlob(file, baseName);
         else { // Others
