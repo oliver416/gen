@@ -158,6 +158,61 @@
       document.getElementById('exportButton').addEventListener('click', saveFile);
       document.getElementById('editButton').addEventListener('click', editForm);
 
+      loadTree([]);
+
+      function loadTree(tree) {
+        document.getElementById('graph').innerHTML = '';
+
+        dTree.init(tree, {
+          target: "#graph",
+          debug: true,
+          height: 800,
+          width: 1200,
+          callbacks: {
+            nodeClick: function(name, extra, id) {
+              let form = document.getElementById('editForm');
+              
+              form.classList.add('visible');
+              
+              clearForm(form);
+              fillForm(name, extra);
+              blockForm(form, true);
+            },
+            textRenderer: function(name, extra, textClass) {
+              if (extra) {
+                if (extra.surname) {
+                  name = `${name} ${extra.surname}`;
+                }                
+
+                if (extra.maidenname) {
+                  name = `${name} (${extra.maidenname})`;
+                }
+
+                if (extra.birthdate) {
+                  name = `${name} (${extra.birthdate})`;
+                }
+
+                if (extra.deathdate) {
+                  name = `${name.slice(0, -1)}-${extra.deathdate})`;
+                }
+              }
+
+              return "<p align='center' class='" + textClass + "'>" + name + "</p>";
+            },
+            nodeRenderer: function(name, x, y, height, width, extra, id, nodeClass, textClass, textRenderer) {
+              let node = '';
+              node += '<div ';
+              node += 'style="height:100%;width:100%;" ';
+              node += 'class="' + nodeClass + '" ';
+              node += 'id="node' + id + '">\n';
+              node += textRenderer(name, extra, textClass);
+              node += '</div>';
+              return node;
+          }
+          }
+        });
+      }
+
       function loadFile() {
         if (typeof window.FileReader !== 'function') {
           return;
@@ -245,57 +300,8 @@
         } catch {
           return;
         }
-        
-        document.getElementById('graph').innerHTML = '';
 
-        dTree.init(treeData, {
-          target: "#graph",
-          debug: true,
-          height: 800,
-          width: 1200,
-          callbacks: {
-            nodeClick: function(name, extra, id) {
-              let form = document.getElementById('editForm');
-              
-              form.classList.add('visible');
-              
-              clearForm(form);
-              fillForm(name, extra);
-              blockForm(form, true);
-            },
-            textRenderer: function(name, extra, textClass) {
-              if (extra) {
-                if (extra.surname) {
-                  name = `${name} ${extra.surname}`;
-                }                
-
-                if (extra.maidenname) {
-                  name = `${name} (${extra.maidenname})`;
-                }
-
-                if (extra.birthdate) {
-                  name = `${name} (${extra.birthdate})`;
-                }
-
-                if (extra.deathdate) {
-                  name = `${name.slice(0, -1)}-${extra.deathdate})`;
-                }
-              }
-
-              return "<p align='center' class='" + textClass + "'>" + name + "</p>";
-            },
-            nodeRenderer: function(name, x, y, height, width, extra, id, nodeClass, textClass, textRenderer) {
-              let node = '';
-              node += '<div ';
-              node += 'style="height:100%;width:100%;" ';
-              node += 'class="' + nodeClass + '" ';
-              node += 'id="node' + id + '">\n';
-              node += textRenderer(name, extra, textClass);
-              node += '</div>';
-              return node;
-          }
-          }
-        });
+        loadTree(treeData);
       }
 
       function clearForm(form) {
