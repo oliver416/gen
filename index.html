@@ -258,10 +258,12 @@
               return findParentNode(marriages, nodeId);
             }
 
-            if (children && children.includes(nodeId)) {
-              return node;
-            } else {
-              return findParentNode(children, nodeId);
+            if (children) {
+              if (children.includes(nodeId)) {
+                return node;
+              } else {
+                return findParentNode(children, nodeId);
+              }
             }
           }
         }
@@ -277,13 +279,13 @@
           }
 
           if (children) {
-              for (child of children) {
-                if (child === nodeId) {
-                  parentNode['children'][children.indexOf(child)] = node;
-                  return;
-                }
+            for (child of children) {
+              if (child === nodeId) {
+                parentNode['children'][children.indexOf(child)] = node;
+                return;
               }
             }
+          }
         }
 
         let tree;
@@ -293,9 +295,14 @@
             continue;
           }
 
-          let nodeId = node['id'];
-          
+          let nodeId = node['id'];          
           parentNode = findParentNode(tree, nodeId);
+          
+          if (!parentNode) {
+            tree.push(node);
+            continue;
+          }
+
           addNode(parentNode, node);
         }
 
@@ -304,13 +311,12 @@
 
       function receivedText(e) {
         try {
-          let familyDB = JSON.parse(e.target.result);
-          let tree = arrayToTree(familyDB);
+          familyDB = JSON.parse(e.target.result);
+          let tree = arrayToTree(JSON.parse(e.target.result));
           loadTree(tree);
         } catch {
           return;
         }
-        
       }
       
       function showElement(element, isVisible) {
@@ -406,7 +412,8 @@
         }
 
         familyDB.push(person);
-        let tree = arrayToTree(familyDB);
+        let array = JSON.parse(JSON.stringify(familyDB));
+        let tree = arrayToTree(array);
         loadTree(tree);
 
         showElement(addButton, false);
@@ -416,19 +423,19 @@
       function saveFile() {
         var file = new Blob([JSON.stringify(familyDB)], {type: 'text/json'});
         if (window.navigator.msSaveOrOpenBlob) // IE10+
-            window.navigator.msSaveOrOpenBlob(file, baseName);
+          window.navigator.msSaveOrOpenBlob(file, baseName);
         else { // Others
-            let link = document.createElement('a');
-            let url = URL.createObjectURL(file);
-            
-            link.href = url;
-            link.download = baseName;
-            document.body.appendChild(link);
-            link.click();
-            setTimeout(function() {
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(url);  
-            }, 0); 
+          let link = document.createElement('a');
+          let url = URL.createObjectURL(file);
+          
+          link.href = url;
+          link.download = baseName;
+          document.body.appendChild(link);
+          link.click();
+          setTimeout(function() {
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);  
+          }, 0); 
         }
       }
     </script>
