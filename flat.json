@@ -1,15 +1,5 @@
 [
   {
-    "id": 1,
-    "name": "Niclas Superlongsurname",
-    "class": "man",
-    "textClass": "emphasis",
-    "extra": {},
-    "marriages": [
-      {"spouse": 2, "children": [3]}
-    ]
-  },
-  {
     "id": 2,
     "name": "Helen",
     "class": "woman",
@@ -29,6 +19,21 @@
     } 
   },
   {
+    "id": 1,
+    "name": "Niclas Superlongsurname",
+    "class": "man",
+    "textClass": "emphasis",
+    "extra": {},
+    "marriages": [
+      {"spouse": 2, "children": [3]}
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Alexandra",
+    "class": "woman"
+  },
+  {
     "id": 3,
     "name": "James",
     "class": "man",
@@ -37,8 +42,8 @@
     ]
   },
   {
-    "id": 4,
-    "name": "Alexandra",
+    "id": 11,
+    "name": "Eva",
     "class": "woman"
   },
   {
@@ -48,11 +53,6 @@
     "marriages":[
       {"spouse": 11}
     ]
-  },
-  {
-    "id": 11,
-    "name": "Eva",
-    "class": "woman"
   },
   {
     "id": 6,

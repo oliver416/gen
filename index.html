@@ -244,7 +244,6 @@
         function findParentNode(tree, nodeId) {
           for (let node of tree) {
             if (
-                nodeId === node['id'] || 
                 nodeId === node['spouse'] || 
                 nodeId === node
               ) {
@@ -269,23 +268,44 @@
         }
 
         function addNode(parentNode, node) {
+          if (!parentNode) {
+            return false;
+          } 
+          
           let nodeId = node['id'];    
           let spouse = parentNode['spouse'];
           let children = parentNode['children'];   
           
           if (spouse === nodeId) {
             parentNode['spouse'] = node;
-            return;
+            return true;
           }
 
           if (children) {
             for (child of children) {
               if (child === nodeId) {
                 parentNode['children'][children.indexOf(child)] = node;
-                return;
+                return true;
               }
             }
           }
+        }
+
+        function cleanTree(tree) {
+          let cleaned_tree = [];
+
+          for (let node of tree) {
+            let nodeId = node['id'];
+            let parentNode = findParentNode(tree, nodeId);
+
+            if (parentNode) {
+              let is_added = addNode(parentNode, node);
+            } else {
+              cleaned_tree.push(node);
+            }
+          }
+
+          return cleaned_tree;
         }
 
         let tree;
@@ -297,16 +317,15 @@
 
           let nodeId = node['id'];          
           parentNode = findParentNode(tree, nodeId);
-          
-          if (!parentNode) {
+          is_added = addNode(parentNode, node);
+
+          if (!is_added) {
             tree.push(node);
             continue;
           }
-
-          addNode(parentNode, node);
         }
-
-        return tree;
+        
+        return cleanTree(tree);
       }
 
       function receivedText(e) {
