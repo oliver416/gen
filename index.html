@@ -5,6 +5,15 @@
     <style>
       body {
           font: 10px sans-serif;
+          background-color: rgba(174, 172, 204, 0.836);
+      }
+
+      input {
+        background-color: rgba(174, 172, 204, 0.836);
+      }
+
+      textarea {
+        background-color: rgba(174, 172, 204, 0.836);
       }
 
       .linage {
@@ -76,6 +85,10 @@
 
       .visible {
         visibility: visible;
+      }
+
+      .selected {
+        opacity: 50%;
       }
 
       #graph {
@@ -167,6 +180,7 @@
       document.getElementById('editButton').addEventListener('click', editForm);
       document.getElementById('addButton').addEventListener('click', addPerson);
       document.getElementById('exportButton').addEventListener('click', saveFile);
+      document.getElementById('graph').addEventListener('click', graphOnClick);
 
       loadTree(familyDB);
 
@@ -181,6 +195,11 @@
           callbacks: {
             nodeClick: function(name, extra, id) {
               let form = document.getElementById('editForm');
+              
+              clearSelectedNodes();
+
+              let node = document.getElementById(`node${id}`);
+              node.classList.add('selected');
               
               showElement(form, true);
               clearForm(form);
@@ -237,6 +256,25 @@
           file_reader.onload = receivedText;
           file_reader.readAsText(file);
           baseName = file.name;
+        }
+      }
+
+      function clearSelectedNodes() {
+        let selectedNodes = document.getElementsByClassName('selected');
+  
+        for (let element of selectedNodes) {
+          element.classList.remove('selected');
+        }
+      }
+
+      function graphOnClick(e) {
+        if (e.target.tagName === 'svg') {
+          let form = document.getElementById('editForm');
+
+          clearSelectedNodes();
+          showElement(form, true);
+          clearForm(form);
+          blockForm(form, true);
         }
       }
 
