@@ -114,6 +114,13 @@
       <div id="graph" class="h100"></div>
 
       <div id="editForm" class="visible">
+        <label for="relative">Relative:</label>
+        <select name="relative" id="relative">
+          <option value="parents">Parents</option>
+          <option value="spouse">Spouse</option>
+          <option value="child">Child</option>
+        </select>
+
         <label for="name">Name</label>
         <input type="text" id="name" readonly>
   
@@ -174,6 +181,7 @@
     
     <script>
       let familyDB = [];
+      let selectedNodeId;
       let baseName;
 
       document.getElementById('loadTree').addEventListener('click', loadFile);
@@ -200,6 +208,7 @@
 
               let node = document.getElementById(`node${id}`);
               node.classList.add('selected');
+              selectedNodeId = extra['id'];
               
               showElement(form, true);
               clearForm(form);
@@ -270,6 +279,7 @@
       function graphOnClick(e) {
         if (e.target.tagName === 'svg') {
           let form = document.getElementById('editForm');
+          selectedNodeId = undefined;
 
           clearSelectedNodes();
           showElement(form, true);
@@ -296,6 +306,14 @@
             }
 
             if (children) {
+
+              // todo: may it be better????
+              for (let child of children) {
+                if (nodeId === child['id']) {
+                  return node;
+                }
+              }
+
               if (children.includes(nodeId)) {
                 return node;
               } else {
@@ -394,6 +412,9 @@
 
         if (data) {
           for (let key in data) {
+            if (data['id']) {
+              continue;
+            }
             document.getElementById(key).value = data[key];
           }
         }
@@ -441,6 +462,28 @@
         return attributes;
       }
 
+      function findRow(db, id) {
+        for (let row of db) {
+          if (id === row['id']){
+            return row;
+          }
+        }
+      }
+
+      function findMarriage(db, id) {
+        for (let row of db) {
+          let marriages = row['marriages'];
+          
+          if (marriages) {
+            for (let marriage of marriages) {
+              if (marriage['spouse'] === id) {
+                return marriage;
+              }
+            }
+          }
+        }
+      }
+
       function addPerson() {
         // todo: refactor such variables
         let form = document.getElementById('editForm');
@@ -451,7 +494,8 @@
         let name = attributes['name'] ? attributes['name'] : 'Unknown';
         let gender = attributes['gender'] ? attributes['gender']: 'man';
         
-        let extra = {};
+        let id = uuidv4();
+        let extra = {"id": id};
 
         for (let key in attributes) {
           if (key === 'name' || key === 'gender') {
@@ -462,12 +506,54 @@
         }
 
         let person = {
-          "id": uuidv4(),
+          "id": id,
           "name": name,
           "class": gender,
           "extra": extra,
         }
 
+        let relative = document.getElementById('relative');
+
+        if (selectedNodeId) {
+          let selectedRow = findRow(familyDB, selectedNodeId);
+          let marriages = selectedRow['marriages'];
+ 
+          if (relative.value === 'parents') {
+            let spouseID = uuidv4();
+            let spouse = {
+              'id': spouseID,
+              'name': 'Unknown',
+              'class': 'woman',
+              'extra': {'id': spouseID},
+            };
+            familyDB.push(spouse);
+            person['marriages'] = [{'spouse': spouseID, 'children': [selectedRow]}];
+          }
+          
+          // todo: restrict addition of children only for women
+          if (relative.value === 'child' && selectedRow['class'] === 'woman') {
+            let marriage = findMarriage(familyDB, selectedNodeId);
+            let children = marriage['children'];
+
+            if (children) {
+              children.push(id);
+            }else{
+              marriage['children'] = [id];
+            }
+          }
+  
+          if (relative.value === 'spouse') {
+            let spouse = {'spouse': id};
+            person['class'] = 'woman';
+  
+            if (marriages) {
+              marriages.push(spouse);
+            } else {
+              selectedRow['marriages'] = [spouse];
+            }    
+          }
+        }  
+        
         familyDB.push(person);
         let array = JSON.parse(JSON.stringify(familyDB));
         let tree = arrayToTree(array);

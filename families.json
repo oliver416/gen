@@ -1,0 +1,53 @@
+[
+    {
+        "id": 1,
+        "name": "Jessica",
+        "class": "woman",
+        "extra": {"id": 1}
+    },
+    {
+        "id": 2,
+        "name": "Martin",
+        "class": "man",
+        "extra": {"id": 2},
+        "marriages": [
+            {"spouse": 1, "children": [3]}
+        ]
+    },
+    {
+        "id": 3,
+        "name": "Jane",
+        "class": "woman",
+        "extra": {"id": 3}
+    },
+    {
+        "id": 4,
+        "name": "Jane",
+        "class": "woman",
+        "extra": {"id": 4}
+    },
+    {
+        "id": 5,
+        "name": "John",
+        "class": "man",
+        "extra": {"id": 5},
+        "marriages":[
+            {"spouse": 4, "children":[1]}
+        ]
+    },
+    {
+        "id": 6,
+        "name": "James",
+        "class": "man",
+        "extra": {"id": 6},
+        "marriages":[
+            {"spouse": 7, "children":[2]}
+        ]
+    },
+    {
+        "id": 7,
+        "name": "Justina",
+        "class": "woman",
+        "extra": {"id": 7}
+    }
+]

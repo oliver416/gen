@@ -4,6 +4,7 @@
     "name": "Helen",
     "class": "woman",
     "extra": {
+      "id": 2,
       "surname": "Hell",
       "patronymic": null,
       "maidenname": "Buiova",
@@ -23,7 +24,7 @@
     "name": "Niclas Superlongsurname",
     "class": "man",
     "textClass": "emphasis",
-    "extra": {},
+    "extra": {"id": 1},
     "marriages": [
       {"spouse": 2, "children": [3]}
     ]
@@ -31,7 +32,8 @@
   {
     "id": 4,
     "name": "Alexandra",
-    "class": "woman"
+    "class": "woman",
+    "extra": {"id": 4}
   },
   {
     "id": 3,
@@ -39,12 +41,14 @@
     "class": "man",
     "marriages": [
       {"spouse": 4, "children": [5,6,7,8,9,10]}
-    ]
+    ],
+    "extra": {"id": 3}
   },
   {
     "id": 11,
     "name": "Eva",
-    "class": "woman"
+    "class": "woman",
+    "extra": {"id": 11}
   },
   {
     "id": 5,
@@ -52,31 +56,37 @@
     "class": "man",
     "marriages":[
       {"spouse": 11}
-    ]
+    ],
+    "extra": {"id": 5}
   },
   {
     "id": 6,
     "name": "Jane",
-    "class": "woman"
+    "class": "woman",
+    "extra": {"id": 6}
   },
   {
     "id": 7,
     "name": "Jasper",
-    "class": "man"
+    "class": "man",
+    "extra": {"id": 7}
   },
   {
     "id": 8,
     "name": "Emma",
-    "class": "woman"
+    "class": "woman",
+    "extra": {"id": 8}
   },
   {
     "id": 9,
     "name": "Julia",
-    "class": "woman"
+    "class": "woman",
+    "extra": {"id": 9}
   },
   {
     "id": 10,
     "name": "Jessica",
-    "class": "woman"
+    "class": "woman",
+    "extra": {"id": 10}
   }
 ]
