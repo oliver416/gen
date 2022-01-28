@@ -115,7 +115,7 @@
 
       <div id="editForm" class="visible">
         <label for="relative">Relative:</label>
-        <select name="relative" id="relative">
+        <select name="relative" class="hidden" id="relative">
           <option value="parents">Parents</option>
           <option value="spouse">Spouse</option>
           <option value="child">Child</option>
@@ -209,6 +209,17 @@
               let node = document.getElementById(`node${id}`);
               node.classList.add('selected');
               selectedNodeId = extra['id'];
+
+              let row = findRow(familyDB, selectedNodeId);
+              let relative = document.getElementById('relative');
+
+              if (row['class'] === 'man') {
+                showElement(relative, true);
+                hideOptions(form, ['child']);
+              } else {
+                showElement(relative, true);
+                hideOptions(form, ['parents', 'spouse']);
+              }
               
               showElement(form, true);
               clearForm(form);
@@ -285,6 +296,7 @@
           showElement(form, true);
           clearForm(form);
           blockForm(form, true);
+          hideOptions(form, 'all');
         }
       }
 
@@ -436,6 +448,25 @@
         }
       }
 
+      function hideOptions(form, values) {
+        let relative = document.getElementById('relative');
+        let options = form.getElementsByTagName('option');
+
+        for (let option of options) {
+          showElement(option, true);
+
+          if (values === 'all') {
+            showElement(relative, false);
+            continue;
+          }
+
+          if (values.includes(option.value)) {
+            relative.value = '';
+            showElement(option, false);
+          }
+        }
+      }
+
       function extractFormData(form) {
         let inputs = form.getElementsByTagName('input');
         let textareas = form.getElementsByTagName('textarea');
@@ -468,7 +499,7 @@
         }
       }
 
-      function findMarriage(db, id) {
+      function findMarriage(db, id, isReturnFather) {
         for (let row of db) {
           let marriages = row['marriages'];
           
@@ -476,6 +507,14 @@
             for (let marriage of marriages) {
               if (marriage['spouse'] === id) {
                 return marriage;
+              }
+
+              let children = marriage['children'];
+
+              if (children && isReturnFather) {
+                if (children.includes(id)) {
+                  return row;
+                }
               }
             }
           }
@@ -516,20 +555,28 @@
           let selectedRow = findRow(familyDB, selectedNodeId);
           let marriages = selectedRow['marriages'];
           
-          // todo: add restrictions
           if (relative.value === 'parents' && selectedRow['class'] === 'man') {
-            let spouseID = uuidv4();
-            let spouse = {
-              'id': spouseID,
-              'name': 'Unknown',
-              'class': 'woman',
-              'extra': {'id': spouseID},
-            };
-            familyDB.push(spouse);
-            person['marriages'] = [{'spouse': spouseID, 'children': [selectedNodeId]}];
+            let father = findMarriage(familyDB, selectedNodeId, true);
+
+            if (!father) {
+              let spouseID = uuidv4();
+              let spouse = {
+                'id': spouseID,
+                'name': 'Unknown',
+                'class': 'woman',
+                'extra': {'id': spouseID},
+              };
+              familyDB.push(spouse);
+              person['marriages'] = [{'spouse': spouseID, 'children': [selectedNodeId]}];
+            } else {
+              clearSelectedNodes();
+              showElement(relative, false);
+              showElement(addButton, false);
+              showElement(editButton, true);
+              return;
+            }
           }
           
-          // todo: restrict addition of children only for women
           if (relative.value === 'child' && selectedRow['class'] === 'woman') {
             let marriage = findMarriage(familyDB, selectedNodeId);
             let children = marriage['children'];
@@ -541,7 +588,6 @@
             }
           }
           
-          // todo: add restrictions
           if (relative.value === 'spouse' && selectedRow['class'] === 'man') {
             let spouse = {'spouse': id};
             person['class'] = 'woman';
@@ -559,6 +605,7 @@
         let tree = arrayToTree(array);
         loadTree(tree);
 
+        showElement(relative, false);
         showElement(addButton, false);
         showElement(editButton, true);
       }
