@@ -302,22 +302,20 @@
             let children = node['children'];
 
             if (marriages) {
-              return findParentNode(marriages, nodeId);
+              let parentNode = findParentNode(marriages, nodeId);
+              if (parentNode) {
+                return parentNode;
+              }
             }
 
             if (children) {
-
-              // todo: may it be better????
-              for (let child of children) {
-                if (nodeId === child['id']) {
-                  return node;
-                }
-              }
-
               if (children.includes(nodeId)) {
                 return node;
               } else {
-                return findParentNode(children, nodeId);
+                let parentNode = findParentNode(children, nodeId);
+                if (parentNode) {
+                  return parentNode;
+                }
               }
             }
           }
@@ -517,8 +515,9 @@
         if (selectedNodeId) {
           let selectedRow = findRow(familyDB, selectedNodeId);
           let marriages = selectedRow['marriages'];
- 
-          if (relative.value === 'parents') {
+          
+          // todo: add restrictions
+          if (relative.value === 'parents' && selectedRow['class'] === 'man') {
             let spouseID = uuidv4();
             let spouse = {
               'id': spouseID,
@@ -527,7 +526,7 @@
               'extra': {'id': spouseID},
             };
             familyDB.push(spouse);
-            person['marriages'] = [{'spouse': spouseID, 'children': [selectedRow]}];
+            person['marriages'] = [{'spouse': spouseID, 'children': [selectedNodeId]}];
           }
           
           // todo: restrict addition of children only for women
@@ -541,8 +540,9 @@
               marriage['children'] = [id];
             }
           }
-  
-          if (relative.value === 'spouse') {
+          
+          // todo: add restrictions
+          if (relative.value === 'spouse' && selectedRow['class'] === 'man') {
             let spouse = {'spouse': id};
             person['class'] = 'woman';
   
