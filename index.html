@@ -4,8 +4,8 @@
   <head>
     <style>
       body {
-          font: 10px sans-serif;
-          background-color: rgba(174, 172, 204, 0.836);
+        font: 10px sans-serif;
+        background-color: rgba(174, 172, 204, 0.836);
       }
 
       input {
@@ -17,31 +17,31 @@
       }
 
       .linage {
-          fill: none;
-          stroke: #000;
+        fill: none;
+        stroke: #000;
       }
 
       .marriage {
-          fill: none;
-          stroke: black;
+        fill: none;
+        stroke: black;
       }
 
       .man {
-          background-color: lightblue;
-          border-style: solid;
-          border-width: 1px;
-          box-sizing: border-box;
+        background-color: lightblue;
+        border-style: solid;
+        border-width: 1px;
+        box-sizing: border-box;
       }
 
       .woman {
-          background-color: salmon;
-          border-style: solid;
-          border-width: 1px;
-          box-sizing: border-box;
+        background-color: salmon;
+        border-style: solid;
+        border-width: 1px;
+        box-sizing: border-box;
       }
 
       .emphasis {
-          font-style: italic;
+        font-style: italic;
       }
 
       p {
@@ -50,8 +50,7 @@
       }
 
       svg {
-        border-style: solid;
-        border-width: 1px;
+        border-right: 1px solid;
         height: 100%;
         width: 100%;
       }
@@ -101,6 +100,8 @@
         top: 0;
         width: 20%;
         display: grid;
+        height: 100%;
+        overflow-y: auto;
       }
     </style>
   </head>
@@ -169,6 +170,7 @@
   
         <button id="editButton">Edit</button>
         <button id="addButton" class="hidden">Add</button>
+        <button id="deleteButton" class="hidden">Delete</button>
         <button id="exportButton" class="hidden">Export</button>
       </div>
     </div>
@@ -187,6 +189,7 @@
       document.getElementById('loadTree').addEventListener('click', loadFile);
       document.getElementById('editButton').addEventListener('click', editForm);
       document.getElementById('addButton').addEventListener('click', addPerson);
+      document.getElementById('deleteButton').addEventListener('click', deletePerson);
       document.getElementById('exportButton').addEventListener('click', saveFile);
       document.getElementById('graph').addEventListener('click', graphOnClick);
 
@@ -203,7 +206,7 @@
           callbacks: {
             nodeClick: function(name, extra, id) {
               let form = document.getElementById('editForm');
-              
+              let deleteButton = document.getElementById('deleteButton'); 
               clearSelectedNodes();
 
               let node = document.getElementById(`node${id}`);
@@ -222,6 +225,7 @@
               }
               
               showElement(form, true);
+              showElement(deleteButton, true);
               clearForm(form);
               fillForm(name, extra);
               blockForm(form, true);
@@ -434,10 +438,12 @@
         let form = document.getElementById('editForm');
         let addButton = document.getElementById('addButton');
         let editButton = document.getElementById('editButton');
+        let deleteButton = document.getElementById('deleteButton');
         
         blockForm(form, false);
         showElement(addButton, true);
         showElement(editButton, false);
+        showElement(deleteButton, false);
       }
 
       function blockForm(form, isBlocked) {
@@ -499,21 +505,56 @@
         }
       }
 
-      function findMarriage(db, id, isReturnFather) {
+      function deleteRow(db, id) {
+        let marriage = findMarriage(db, id, 'marriage');
+
+        if (marriage) {
+          let children = marriage['children'];
+          children.splice(children.indexOf(id), 1);
+
+          if (marriage['spouse'] === id) {
+            let spouse = findMarriage(db, id, 'spouse');
+            let marriages = spouse['marriages'];
+
+            if (marriages.length === 1) {
+              delete spouse['marriages'];
+            }
+
+            marriages.splice(marriages.indexOf(marriage), 1);
+          }
+        }
+
+        let row = findRow(db, id);
+        db.splice(db.indexOf(row), 1);
+
+        return db;
+      }
+
+      function findMarriage(db, id, returnObject) {
         for (let row of db) {
           let marriages = row['marriages'];
           
           if (marriages) {
             for (let marriage of marriages) {
               if (marriage['spouse'] === id) {
+                if (returnObject === 'spouse') {
+                  return row;
+                }
+
                 return marriage;
               }
 
               let children = marriage['children'];
 
-              if (children && isReturnFather) {
+              if (children) {
                 if (children.includes(id)) {
-                  return row;
+                  if (returnObject === 'father') {
+                    return row;
+                  }
+                  
+                  if (returnObject === 'marriage') {
+                    return marriage;
+                  }
                 }
               }
             }
@@ -526,6 +567,7 @@
         let form = document.getElementById('editForm');
         let addButton = document.getElementById('addButton');
         let editButton = document.getElementById('editButton');
+        let deleteButton = document.getElementById('deleteButton');
         
         let attributes = extractFormData(form);
         let name = attributes['name'] ? attributes['name'] : 'Unknown';
@@ -556,7 +598,7 @@
           let marriages = selectedRow['marriages'];
           
           if (relative.value === 'parents' && selectedRow['class'] === 'man') {
-            let father = findMarriage(familyDB, selectedNodeId, true);
+            let father = findMarriage(familyDB, selectedNodeId, 'father');
 
             if (!father) {
               let spouseID = uuidv4();
@@ -607,7 +649,32 @@
 
         showElement(relative, false);
         showElement(addButton, false);
+        showElement(deleteButton, false);
         showElement(editButton, true);
+      }
+
+      function deletePerson() {
+        let deleteButton = document.getElementById('deleteButton');
+        
+        if (selectedNodeId) {
+          let marriage = findMarriage(familyDB, selectedNodeId);
+          
+          if (!marriage) {
+            familyDB = deleteRow(familyDB, selectedNodeId);
+          }else {
+            let children = marriage['children'];
+
+            if (children.length === 0) {
+              familyDB = deleteRow(familyDB, selectedNodeId);
+            }
+          }
+        }
+        
+        let array = JSON.parse(JSON.stringify(familyDB));
+        let tree = array.length > 0 ? arrayToTree(array) : [];
+          
+        loadTree(tree);
+        showElement(deleteButton, false);
       }
 
       function saveFile() {
