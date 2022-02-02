@@ -169,6 +169,7 @@
         <textarea id="cemetery" readonly></textarea>
   
         <button id="editButton">Edit</button>
+        <button id="updateButton" class="hidden">Update</button>
         <button id="addButton" class="hidden">Add</button>
         <button id="deleteButton" class="hidden">Delete</button>
         <button id="exportButton" class="hidden">Export</button>
@@ -189,6 +190,7 @@
       document.getElementById('loadTree').addEventListener('click', loadFile);
       document.getElementById('editButton').addEventListener('click', editForm);
       document.getElementById('addButton').addEventListener('click', addPerson);
+      document.getElementById('updateButton').addEventListener('click', updatePerson);
       document.getElementById('deleteButton').addEventListener('click', deletePerson);
       document.getElementById('exportButton').addEventListener('click', saveFile);
       document.getElementById('graph').addEventListener('click', graphOnClick);
@@ -437,11 +439,13 @@
       function editForm() {
         let form = document.getElementById('editForm');
         let addButton = document.getElementById('addButton');
+        let updateButton = document.getElementById('updateButton');
         let editButton = document.getElementById('editButton');
         let deleteButton = document.getElementById('deleteButton');
         
         blockForm(form, false);
         showElement(addButton, true);
+        showElement(updateButton, true);
         showElement(editButton, false);
         showElement(deleteButton, false);
       }
@@ -493,8 +497,25 @@
         for (let textarea of textareas) {
           attributes[textarea.id] = textarea.value;
         }
+        
+        attributes['name'] = attributes['name'] ? attributes['name'] : 'Unknown';
+        attributes['gender'] = attributes['gender'] ? attributes['gender']: 'man';
 
         return attributes;
+      }
+
+      function createExtra(id, object) {
+        let extra = {"id": id};
+
+        for (let key in object) {
+          if (key === 'name' || key === 'gender') {
+            continue;
+          }
+
+          extra[key] = object[key];
+        }
+
+        return extra;
       }
 
       function findRow(db, id) {
@@ -526,6 +547,20 @@
 
         let row = findRow(db, id);
         db.splice(db.indexOf(row), 1);
+
+        return db;
+      }
+
+      function updateRow(db, id, object) {
+        let row = findRow(db, id);
+
+        row['name'] = object['name'] ? object['name'] : 'Unknown';
+        row['gender'] = object['gender'] ? object['gender'] : 'man';
+        
+        let rowId = row['extra']['id'];
+
+        let extra = createExtra(id, object);
+        row['extra'] = extra;
 
         return db;
       }
@@ -562,27 +597,42 @@
         }
       }
 
+      function updatePerson() {
+        let form = document.getElementById('editForm');
+        let editButton = document.getElementById('editButton');
+        let addButton = document.getElementById('addButton');
+        let updateButton = document.getElementById('updateButton');
+        
+        // TODO: update bug - cannot get data by click
+        // TODO: remove updateButton if the graph is empty
+        let attributes = extractFormData(form);
+        let db = updateRow(familyDB, selectedNodeId, attributes);
+
+        let array = JSON.parse(JSON.stringify(db));
+        let tree = arrayToTree(array);
+        loadTree(tree);
+       
+        selectedNodeId = undefined;
+        clearSelectedNodes();
+        showElement(updateButton, false);
+        showElement(addButton, false);
+        showElement(editButton, true);
+      }
+
       function addPerson() {
         // todo: refactor such variables
         let form = document.getElementById('editForm');
         let addButton = document.getElementById('addButton');
+        let updateButton = document.getElementById('updateButton');
         let editButton = document.getElementById('editButton');
         let deleteButton = document.getElementById('deleteButton');
         
         let attributes = extractFormData(form);
-        let name = attributes['name'] ? attributes['name'] : 'Unknown';
-        let gender = attributes['gender'] ? attributes['gender']: 'man';
         
         let id = uuidv4();
-        let extra = {"id": id};
-
-        for (let key in attributes) {
-          if (key === 'name' || key === 'gender') {
-            continue;
-          }
-
-          extra[key] = attributes[key];
-        }
+        let extra = createExtra(id, attributes);
+        let gender = attributes['gender'] ? attributes['gender']: 'man';
+        let name = attributes['name'] ? attributes['name'] : 'Unknown';
 
         let person = {
           "id": id,
@@ -614,6 +664,7 @@
               clearSelectedNodes();
               showElement(relative, false);
               showElement(addButton, false);
+              showElement(updateButton, false);
               showElement(editButton, true);
               return;
             }
@@ -649,6 +700,7 @@
 
         showElement(relative, false);
         showElement(addButton, false);
+        showElement(updateButton, false);
         showElement(deleteButton, false);
         showElement(editButton, true);
       }
@@ -665,6 +717,7 @@
             let children = marriage['children'];
 
             if (children.length === 0) {
+              showElement(updateButton, false);
               familyDB = deleteRow(familyDB, selectedNodeId);
             }
           }
