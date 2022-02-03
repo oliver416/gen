@@ -442,10 +442,11 @@
         let updateButton = document.getElementById('updateButton');
         let editButton = document.getElementById('editButton');
         let deleteButton = document.getElementById('deleteButton');
-        
+
+        selectedNodeId ? showElement(updateButton, true) : showElement(updateButton, false);
+
         blockForm(form, false);
         showElement(addButton, true);
-        showElement(updateButton, true);
         showElement(editButton, false);
         showElement(deleteButton, false);
       }
@@ -553,9 +554,9 @@
 
       function updateRow(db, id, object) {
         let row = findRow(db, id);
-
-        row['name'] = object['name'] ? object['name'] : 'Unknown';
-        row['gender'] = object['gender'] ? object['gender'] : 'man';
+        
+        row['name'] = object['name'];
+        row['gender'] = object['gender'];
         
         let rowId = row['extra']['id'];
 
@@ -604,11 +605,10 @@
         let updateButton = document.getElementById('updateButton');
         
         // TODO: update bug - cannot get data by click
-        // TODO: remove updateButton if the graph is empty
         let attributes = extractFormData(form);
-        let db = updateRow(familyDB, selectedNodeId, attributes);
+        familyDB = updateRow(familyDB, selectedNodeId, attributes);
 
-        let array = JSON.parse(JSON.stringify(db));
+        let array = JSON.parse(JSON.stringify(familyDB));
         let tree = arrayToTree(array);
         loadTree(tree);
        
@@ -631,13 +631,11 @@
         
         let id = uuidv4();
         let extra = createExtra(id, attributes);
-        let gender = attributes['gender'] ? attributes['gender']: 'man';
-        let name = attributes['name'] ? attributes['name'] : 'Unknown';
 
         let person = {
           "id": id,
-          "name": name,
-          "class": gender,
+          "name": attributes['name'],
+          "class": attributes['gender'],
           "extra": extra,
         }
 
