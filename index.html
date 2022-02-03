@@ -134,12 +134,11 @@
         <label for="maidenname">Maidenname</label>
         <input type="text" id="maidenname" readonly>
 
-        <label for="gender">Gender</label> 
-        <input type="radio" id="man" name="gender" value="man">
-        <label for="man">Male</label>
-
-        <input type="radio" id="woman" name="gender" value="woman">
-        <label for="man">Female</label>
+        <label for="gender">Gender</label>
+        <select name="gender" id="gender" disabled>
+          <option value="man">Man</option>
+          <option value="woman">Woman</option>
+        </select>
 
         <label for="birthdate">Birthdate</label>
         <input type="text" id="birthdate" readonly>
@@ -217,7 +216,8 @@
 
               let row = findRow(familyDB, selectedNodeId);
               let relative = document.getElementById('relative');
-
+              extra['gender'] = row['class'];
+              
               if (row['class'] === 'man') {
                 showElement(relative, true);
                 hideOptions(form, ['child']);
@@ -296,12 +296,20 @@
       function graphOnClick(e) {
         if (e.target.tagName === 'svg') {
           let form = document.getElementById('editForm');
+          let editButton = document.getElementById('editButton');
+          let addButton = document.getElementById('addButton');
+          let updateButton = document.getElementById('updateButton');
+          let deleteButton = document.getElementById('deleteButton');
           selectedNodeId = undefined;
 
           clearSelectedNodes();
           showElement(form, true);
           clearForm(form);
           blockForm(form, true);
+          showElement(editButton, true);
+          showElement(addButton, false);
+          showElement(updateButton, false);
+          showElement(deleteButton, false);
           hideOptions(form, 'all');
         }
       }
@@ -452,10 +460,17 @@
       }
 
       function blockForm(form, isBlocked) {
-        let nodes = form.querySelectorAll('input, textarea');
+        let inputs = form.querySelectorAll('input, textarea');
 
-        for (let node of nodes) {
-          node.readOnly = isBlocked;
+        for (let input of inputs) {
+          input.readOnly = isBlocked;
+        }
+
+        // TODO: refactor
+        let selects = form.querySelectorAll('select');
+
+        for (let select of selects) {
+          select.disabled = isBlocked;
         }
       }
 
@@ -485,13 +500,6 @@
         let attributes = {}
 
         for (let input of inputs) {
-          if (input.id === 'man' || input.id === 'woman') { 
-            if (input.checked) {
-              attributes['gender'] = input.value;
-            }
-            continue;
-          }
-
           attributes[input.id] = input.value;
         }
 
@@ -500,8 +508,10 @@
         }
         
         attributes['name'] = attributes['name'] ? attributes['name'] : 'Unknown';
-        attributes['gender'] = attributes['gender'] ? attributes['gender']: 'man';
-
+       
+        let gender = document.getElementById('gender').value;
+        attributes['gender'] = gender ? gender : 'man';
+        
         return attributes;
       }
 
@@ -556,7 +566,7 @@
         let row = findRow(db, id);
         
         row['name'] = object['name'];
-        row['gender'] = object['gender'];
+        row['class'] = object['gender'];
         
         let rowId = row['extra']['id'];
 
