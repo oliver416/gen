@@ -108,7 +108,7 @@
   <body>
     <div class="menu w100">
       <input type="file" id="selectFile" value="Open"/>
-      <button id="loadTree">Load tree</button>
+      <button id="exportButton">Export</button>
     </div>
 
     <div class="main w100">
@@ -187,7 +187,7 @@
       let selectedNodeId;
       let baseName;
 
-      document.getElementById('loadTree').addEventListener('click', loadFile);
+      document.getElementById('selectFile').addEventListener('change', loadFile);
       document.getElementById('editButton').addEventListener('click', editForm);
       document.getElementById('addButton').addEventListener('click', addPerson);
       document.getElementById('updateButton').addEventListener('click', updatePerson);
@@ -428,7 +428,7 @@
 
         if (data) {
           for (let key in data) {
-            if (data['id']) {
+            if (key === 'id') {
               continue;
             }
             document.getElementById(key).value = data[key];
