@@ -187,6 +187,7 @@
       let baseName;
 
       document.getElementById('selectFile').addEventListener('change', loadFile);
+      document.getElementById('relative').addEventListener('change', relativeOnChange);
       document.getElementById('editButton').addEventListener('click', editForm);
       document.getElementById('addButton').addEventListener('click', addPerson);
       document.getElementById('updateButton').addEventListener('click', updatePerson);
@@ -308,6 +309,16 @@
           showElement('deleteButton', false);
           hideOptions(form, 'all');
         }
+      }
+
+      function relativeOnChange(e) {
+        showElement('updateButton', true);
+        showElement('addButton', false);
+      
+        if (e.target.value) {
+          showElement('updateButton', false);
+          showElement('addButton', true);
+        } 
       }
 
       function arrayToTree(array) {
@@ -446,11 +457,18 @@
 
       function editForm() {
         let form = document.getElementById('editForm');
+        let relative = document.getElementById('relative');
 
         selectedNodeId ? showElement('updateButton', true) : showElement('updateButton', false);
 
+        
         blockForm(form, false);
         showElement('addButton', true);
+
+        if (selectedNodeId && !relative.value) {
+          showElement('addButton', false);
+        }
+
         showElement('editButton', false);
         showElement('deleteButton', false);
       }
