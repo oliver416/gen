@@ -207,7 +207,6 @@
           callbacks: {
             nodeClick: function(name, extra, id) {
               let form = document.getElementById('editForm');
-              let deleteButton = document.getElementById('deleteButton'); 
               clearSelectedNodes();
 
               let node = document.getElementById(`node${id}`);
@@ -215,19 +214,18 @@
               selectedNodeId = extra['id'];
 
               let row = findRow(familyDB, selectedNodeId);
-              let relative = document.getElementById('relative');
               extra['gender'] = row['class'];
               
               if (row['class'] === 'man') {
-                showElement(relative, true);
+                showElement('relative', true);
                 hideOptions(form, ['child']);
               } else {
-                showElement(relative, true);
+                showElement('relative', true);
                 hideOptions(form, ['parents', 'spouse']);
               }
               
               showElement(form, true);
-              showElement(deleteButton, true);
+              showElement('deleteButton', true);
               clearForm(form);
               fillForm(name, extra);
               blockForm(form, true);
@@ -296,20 +294,18 @@
       function graphOnClick(e) {
         if (e.target.tagName === 'svg') {
           let form = document.getElementById('editForm');
-          let editButton = document.getElementById('editButton');
-          let addButton = document.getElementById('addButton');
-          let updateButton = document.getElementById('updateButton');
-          let deleteButton = document.getElementById('deleteButton');
           selectedNodeId = undefined;
 
           clearSelectedNodes();
           showElement(form, true);
           clearForm(form);
           blockForm(form, true);
-          showElement(editButton, true);
-          showElement(addButton, false);
-          showElement(updateButton, false);
-          showElement(deleteButton, false);
+          
+          // TODO: refactor - showElement({'editButton', false}) 
+          showElement('editButton', true);
+          showElement('addButton', false);
+          showElement('updateButton', false);
+          showElement('deleteButton', false);
           hideOptions(form, 'all');
         }
       }
@@ -419,6 +415,10 @@
       }
       
       function showElement(element, isVisible) {
+          if (typeof element === 'string') {
+            element = document.getElementById(element);
+          }
+
           element.removeAttribute('class');
           element.classList.add(isVisible ? 'visible': 'hidden');
       }
@@ -446,17 +446,13 @@
 
       function editForm() {
         let form = document.getElementById('editForm');
-        let addButton = document.getElementById('addButton');
-        let updateButton = document.getElementById('updateButton');
-        let editButton = document.getElementById('editButton');
-        let deleteButton = document.getElementById('deleteButton');
 
-        selectedNodeId ? showElement(updateButton, true) : showElement(updateButton, false);
+        selectedNodeId ? showElement('updateButton', true) : showElement('updateButton', false);
 
         blockForm(form, false);
-        showElement(addButton, true);
-        showElement(editButton, false);
-        showElement(deleteButton, false);
+        showElement('addButton', true);
+        showElement('editButton', false);
+        showElement('deleteButton', false);
       }
 
       function blockForm(form, isBlocked) {
@@ -466,7 +462,7 @@
           input.readOnly = isBlocked;
         }
 
-        // TODO: refactor
+        // TODO: refactor - duplicate logic
         let selects = form.querySelectorAll('select');
 
         for (let select of selects) {
@@ -474,6 +470,7 @@
         }
       }
 
+      // TODO: refactor - form -> formId
       function hideOptions(form, values) {
         let relative = document.getElementById('relative');
         let options = form.getElementsByTagName('option');
@@ -610,11 +607,7 @@
 
       function updatePerson() {
         let form = document.getElementById('editForm');
-        let editButton = document.getElementById('editButton');
-        let addButton = document.getElementById('addButton');
-        let updateButton = document.getElementById('updateButton');
         
-        // TODO: update bug - cannot get data by click
         let attributes = extractFormData(form);
         familyDB = updateRow(familyDB, selectedNodeId, attributes);
 
@@ -624,18 +617,14 @@
        
         selectedNodeId = undefined;
         clearSelectedNodes();
-        showElement(updateButton, false);
-        showElement(addButton, false);
-        showElement(editButton, true);
+        showElement('updateButton', false);
+        showElement('addButton', false);
+        showElement('editButton', true);
       }
 
       function addPerson() {
         // todo: refactor such variables
         let form = document.getElementById('editForm');
-        let addButton = document.getElementById('addButton');
-        let updateButton = document.getElementById('updateButton');
-        let editButton = document.getElementById('editButton');
-        let deleteButton = document.getElementById('deleteButton');
         
         let attributes = extractFormData(form);
         
@@ -671,9 +660,9 @@
             } else {
               clearSelectedNodes();
               showElement(relative, false);
-              showElement(addButton, false);
-              showElement(updateButton, false);
-              showElement(editButton, true);
+              showElement('addButton', false);
+              showElement('updateButton', false);
+              showElement('editButton', true);
               return;
             }
           }
@@ -707,15 +696,13 @@
         loadTree(tree);
 
         showElement(relative, false);
-        showElement(addButton, false);
-        showElement(updateButton, false);
-        showElement(deleteButton, false);
-        showElement(editButton, true);
+        showElement('addButton', false);
+        showElement('updateButton', false);
+        showElement('deleteButton', false);
+        showElement('editButton', true);
       }
 
       function deletePerson() {
-        let deleteButton = document.getElementById('deleteButton');
-        
         if (selectedNodeId) {
           let marriage = findMarriage(familyDB, selectedNodeId);
           
@@ -725,7 +712,7 @@
             let children = marriage['children'];
 
             if (children.length === 0) {
-              showElement(updateButton, false);
+              showElement('updateButton', false);
               familyDB = deleteRow(familyDB, selectedNodeId);
             }
           }
@@ -735,7 +722,7 @@
         let tree = array.length > 0 ? arrayToTree(array) : [];
           
         loadTree(tree);
-        showElement(deleteButton, false);
+        showElement('deleteButton', false);
       }
 
       function saveFile() {
