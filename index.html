@@ -116,7 +116,8 @@
 
       <div id="editForm" class="visible">
         <label for="relative">Relative:</label>
-        <select name="relative" class="hidden" id="relative">
+        <select name="relative" id="relative" disabled>
+          <option value="none" selected>-------</option>
           <option value="parents">Parents</option>
           <option value="spouse">Spouse</option>
           <option value="child">Child</option>
@@ -217,14 +218,13 @@
               let row = findRow(familyDB, selectedNodeId);
               let rowIsSpouse = isSpouse(familyDB, selectedNodeId);
               extra['gender'] = row['class'];
+             
+              showElement('relative', true);
+              hideOptions(form, ['parents', 'spouse']);
               
               if (!rowIsSpouse) {
-                showElement('relative', true);
                 hideOptions(form, ['child']);
-              } else {
-                showElement('relative', true);
-                hideOptions(form, ['parents', 'spouse']);
-              }
+              }               
               
               showElement(form, true);
               showElement('deleteButton', true);
@@ -296,6 +296,8 @@
       function graphOnClick(e) {
         if (e.target.tagName === 'svg') {
           let form = document.getElementById('editForm');
+          let relative = document.getElementById('relative');
+          relative.value = 'none';
           selectedNodeId = undefined;
 
           clearSelectedNodes();
@@ -316,7 +318,7 @@
         showElement('updateButton', true);
         showElement('addButton', false);
       
-        if (e.target.value) {
+        if (e.target.value !== 'none') {
           showElement('updateButton', false);
           showElement('addButton', true);
         } 
@@ -435,6 +437,10 @@
           element.classList.add(isVisible ? 'visible': 'hidden');
       }
 
+      function enableElement(element, isEnabled) {
+        element.disabled = !isEnabled;
+      }
+
       function clearForm(form) {
         let nodes = form.querySelectorAll('input, textarea');
 
@@ -460,13 +466,17 @@
         let form = document.getElementById('editForm');
         let relative = document.getElementById('relative');
 
-        selectedNodeId ? showElement('updateButton', true) : showElement('updateButton', false);
-
-        
+        enableElement(relative, true);
+        showElement('updateButton', true);
         blockForm(form, false);
-        showElement('addButton', true);
 
-        if (selectedNodeId && !relative.value) {
+        if (!selectedNodeId) {
+          enableElement(relative, false);
+          showElement('addButton', true);
+          showElement('updateButton', false);
+        }
+
+        if (selectedNodeId && relative.value === 'none') {
           showElement('addButton', false);
         }
 
@@ -495,16 +505,16 @@
         let options = form.getElementsByTagName('option');
 
         for (let option of options) {
-          showElement(option, true);
+          enableElement(option, true);
 
           if (values === 'all') {
-            showElement(relative, false);
+            enableElement(relative, false);
             continue;
           }
 
           if (values.includes(option.value)) {
-            relative.value = '';
-            showElement(option, false);
+            relative.value = 'none';
+            enableElement(option, false);
           }
         }
       }
@@ -640,6 +650,7 @@
        
         selectedNodeId = undefined;
         clearSelectedNodes();
+        blockForm(form, true);
         showElement('updateButton', false);
         showElement('addButton', false);
         showElement('editButton', true);
@@ -683,7 +694,8 @@
               person['marriages'] = [{'spouse': spouseID, 'children': [selectedNodeId]}];
             } else {
               clearSelectedNodes();
-              showElement(relative, false);
+              enableElement(relative, false);
+              blockForm(form, true);
               showElement('addButton', false);
               showElement('updateButton', false);
               showElement('editButton', true);
@@ -719,7 +731,8 @@
         let tree = arrayToTree(array);
         loadTree(tree);
 
-        showElement(relative, false);
+        enableElement(relative, false);
+        blockForm(form, true);
         showElement('addButton', false);
         showElement('updateButton', false);
         showElement('deleteButton', false);
