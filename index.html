@@ -215,9 +215,10 @@
               selectedNodeId = extra['id'];
 
               let row = findRow(familyDB, selectedNodeId);
+              let rowIsSpouse = isSpouse(familyDB, selectedNodeId);
               extra['gender'] = row['class'];
               
-              if (row['class'] === 'man') {
+              if (!rowIsSpouse) {
                 showElement('relative', true);
                 hideOptions(form, ['child']);
               } else {
@@ -623,6 +624,10 @@
         }
       }
 
+      function isSpouse(db, id) {
+        return !!findMarriage(db, id, 'spouse');
+      }
+
       function updatePerson() {
         let form = document.getElementById('editForm');
         
@@ -660,9 +665,10 @@
 
         if (selectedNodeId) {
           let selectedRow = findRow(familyDB, selectedNodeId);
+          let rowIsSpouse = isSpouse(familyDB, selectedNodeId);
           let marriages = selectedRow['marriages'];
           
-          if (relative.value === 'parents' && selectedRow['class'] === 'man') {
+          if (relative.value === 'parents' && !rowIsSpouse) {
             let father = findMarriage(familyDB, selectedNodeId, 'father');
 
             if (!father) {
@@ -685,7 +691,7 @@
             }
           }
           
-          if (relative.value === 'child' && selectedRow['class'] === 'woman') {
+          if (relative.value === 'child' && rowIsSpouse) {
             let marriage = findMarriage(familyDB, selectedNodeId);
             let children = marriage['children'];
 
@@ -696,7 +702,7 @@
             }
           }
           
-          if (relative.value === 'spouse' && selectedRow['class'] === 'man') {
+          if (relative.value === 'spouse' && !rowIsSpouse) {
             let spouse = {'spouse': id};
             person['class'] = 'woman';
   
