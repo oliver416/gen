@@ -99,6 +99,13 @@
 
       #graph {
         width: 100%;
+        border: double;
+      }
+
+      #openForm {
+        position: absolute;
+        right: 5%;
+        top: 5%;
       }
 
       #editForm {
@@ -110,7 +117,7 @@
         flex-direction: column;
         height: 100%;
         overflow-y: auto;
-        background-color: rgba(174, 172, 204, 0.836);
+        background-color: rgba(174, 172, 204, 1);
       }
 
       #education {
@@ -139,6 +146,10 @@
   <body>
     <div class="main w100">
       <div id="graph" class="h100"></div>
+
+      <div id="openForm">
+        <button id="openButton">Open</button>
+      </div>
 
       <div id="editForm" class="visible">
         <div class="container">
@@ -245,6 +256,10 @@
             <textarea id="biography" class="border-none" readonly></textarea>
           </div>
         </div>
+
+        <div class="container">
+          <button id="closeButton">Close</button>
+        </div>
         
       </div>
     </div>
@@ -263,6 +278,8 @@
       document.getElementById('selectFile').addEventListener('change', loadFile);
       document.getElementById('relative').addEventListener('change', relativeOnChange);
       document.getElementById('editButton').addEventListener('click', editForm);
+      document.getElementById('openButton').addEventListener('click', openForm);
+      document.getElementById('closeButton').addEventListener('click', closeForm);
       document.getElementById('addButton').addEventListener('click', addPerson);
       document.getElementById('updateButton').addEventListener('click', updatePerson);
       document.getElementById('deleteButton').addEventListener('click', deletePerson);
@@ -533,6 +550,16 @@
             document.getElementById(key).value = data[key];
           }
         }
+      }
+
+      function openForm() {
+        let form = document.getElementById('editForm');
+        showElement(form, true);
+      }
+
+      function closeForm() {
+        let form = document.getElementById('editForm');
+        showElement(form, false);
       }
 
       function editForm() {
