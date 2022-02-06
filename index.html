@@ -50,7 +50,6 @@
       }
 
       svg {
-        border-right: 1px solid;
         height: 100%;
         width: 100%;
       }
@@ -63,18 +62,10 @@
         height: 100%;
       }
 
-      .menu {
-        position: absolute;
-        height: 5%;
-        top: 0;
-        left: 0;
-      }
-
       .main {
         position: absolute;
-        height: 95%;
+        height: 100%;
         left: 0;
-        top: 5%;
         cursor: default;
       }
 
@@ -86,35 +77,44 @@
         visibility: visible;
       }
 
+      .border-none {
+        border: none;
+      }
+
       .selected {
         opacity: 50%;
       }
 
       #graph {
-        width: 80%;
+        width: 100%;
       }
 
       #editForm {
         position: absolute;
-        left: 80%;
+        left: 50%;
         top: 0;
-        width: 20%;
+        width: 50%;
         display: grid;
         height: 100%;
         overflow-y: auto;
+        background-color: rgba(174, 172, 204, 0.836);
       }
     </style>
   </head>
   <body>
-    <div class="menu w100">
-      <input type="file" id="selectFile" value="Open"/>
-      <button id="exportButton">Export</button>
-    </div>
-
     <div class="main w100">
       <div id="graph" class="h100"></div>
 
       <div id="editForm" class="visible">
+        <div class="menu w100">
+          <input type="file" id="selectFile" value="Open"/>
+          <button id="exportButton">Export</button>
+          <button id="editButton">Edit</button>
+          <button id="updateButton" class="hidden">Update</button>
+          <button id="addButton" class="hidden">Add</button>
+          <button id="deleteButton" class="hidden">Delete</button>
+        </div>
+
         <label for="relative">Relative:</label>
         <select name="relative" id="relative" disabled>
           <option value="none" selected>-------</option>
@@ -124,16 +124,16 @@
         </select>
 
         <label for="name">Name</label>
-        <input type="text" id="name" readonly>
+        <input type="text" id="name" class="border-none" readonly>
   
         <label for="surname">Surname</label>
-        <input type="text" id="surname" readonly>
+        <input type="text" id="surname" class="border-none" readonly>
 
         <label for="patronymic">Patronymic</label>
-        <input type="text" id="patronymic" readonly>
+        <input type="text" id="patronymic" class="border-none" readonly>
 
         <label for="maidenname">Maidenname</label>
-        <input type="text" id="maidenname" readonly>
+        <input type="text" id="maidenname" class="border-none" readonly>
 
         <label for="gender">Gender</label>
         <select name="gender" id="gender" disabled>
@@ -142,37 +142,31 @@
         </select>
 
         <label for="birthdate">Birthdate</label>
-        <input type="text" id="birthdate" readonly>
+        <input type="text" id="birthdate" class="border-none" readonly>
 
         <label for="deathdate">Deathdate</label>
-        <input type="text" id="deathdate" readonly>
+        <input type="text" id="deathdate" class="border-none" readonly>
 
         <label for="birthplace">Birthplace</label>
-        <textarea id="birthplace" readonly></textarea>
+        <textarea id="birthplace" class="border-none" readonly></textarea>
 
         <label for="religion">Religion</label>
-        <input type="text" id="religion" readonly>
+        <input type="text" id="religion" class="border-none" readonly>
 
         <label for="nationality">Nationality</label>
-        <input type="text" id="nationality" readonly>
+        <input type="text" id="nationality" class="border-none" readonly>
 
         <label for="education">Education</label>
-        <textarea id="education" readonly></textarea>
+        <textarea id="education" class="border-none" readonly></textarea>
 
         <label for="occupation">Occupation</label>
-        <textarea id="occupation" readonly></textarea>
+        <textarea id="occupation" class="border-none" readonly></textarea>
 
         <label for="biography">Biography</label>
-        <textarea id="biography" readonly></textarea>
+        <textarea id="biography" class="border-none" readonly></textarea>
 
         <label for="cemetery">Cemetery</label>
-        <textarea id="cemetery" readonly></textarea>
-  
-        <button id="editButton">Edit</button>
-        <button id="updateButton" class="hidden">Update</button>
-        <button id="addButton" class="hidden">Add</button>
-        <button id="deleteButton" class="hidden">Delete</button>
-        <button id="exportButton" class="hidden">Export</button>
+        <textarea id="cemetery" class="border-none" readonly></textarea>
       </div>
     </div>
 
