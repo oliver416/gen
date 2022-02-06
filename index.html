@@ -78,7 +78,7 @@
       }
 
       .border-none {
-        border: none;
+        border: double;
       }
 
       .selected {
@@ -115,46 +115,61 @@
           <button id="deleteButton" class="hidden">Delete</button>
         </div>
 
-        <label for="relative">Relative:</label>
-        <select name="relative" id="relative" disabled>
-          <option value="none" selected>-------</option>
-          <option value="parents">Parents</option>
-          <option value="spouse">Spouse</option>
-          <option value="child">Child</option>
-        </select>
+        <div>
+          <label for="relative">Relative:</label>
+          <select name="relative" id="relative" disabled>
+            <option value="none" selected>-------</option>
+            <option value="parents">Parents</option>
+            <option value="spouse">Spouse</option>
+            <option value="child">Child</option>
+          </select>
 
-        <label for="name">Name</label>
-        <input type="text" id="name" class="border-none" readonly>
-  
-        <label for="surname">Surname</label>
-        <input type="text" id="surname" class="border-none" readonly>
+          <label for="gender">Gender</label>
+          <select name="gender" id="gender" disabled>
+            <option value="man">Man</option>
+            <option value="woman">Woman</option>
+          </select>
+        </div>
 
-        <label for="patronymic">Patronymic</label>
-        <input type="text" id="patronymic" class="border-none" readonly>
+        <div>
+          <label for="name">Name</label>
+          <input type="text" id="name" class="border-none" readonly>
+    
+          <label for="surname">Surname</label>
+          <input type="text" id="surname" class="border-none" readonly>
+        </div>
 
-        <label for="maidenname">Maidenname</label>
-        <input type="text" id="maidenname" class="border-none" readonly>
+        <div>
+          <label for="patronymic">Patronymic</label>
+          <input type="text" id="patronymic" class="border-none" readonly>
 
-        <label for="gender">Gender</label>
-        <select name="gender" id="gender" disabled>
-          <option value="man">Man</option>
-          <option value="woman">Woman</option>
-        </select>
+          <label for="maidenname">Maidenname</label>
+          <input type="text" id="maidenname" class="border-none" readonly>
+        </div>
 
-        <label for="birthdate">Birthdate</label>
-        <input type="text" id="birthdate" class="border-none" readonly>
+        <div>
+          <label for="birthdate">Birthdate</label>
+          <input type="text" id="birthdate" class="border-none" readonly>
 
-        <label for="deathdate">Deathdate</label>
-        <input type="text" id="deathdate" class="border-none" readonly>
+          <label for="deathdate">Deathdate</label>
+          <input type="text" id="deathdate" class="border-none" readonly>
+        </div>
 
-        <label for="birthplace">Birthplace</label>
-        <textarea id="birthplace" class="border-none" readonly></textarea>
+        <div>
+          <label for="religion">Religion</label>
+          <input type="text" id="religion" class="border-none" readonly>
 
-        <label for="religion">Religion</label>
-        <input type="text" id="religion" class="border-none" readonly>
+          <label for="nationality">Nationality</label>
+          <input type="text" id="nationality" class="border-none" readonly>
+        </div>
 
-        <label for="nationality">Nationality</label>
-        <input type="text" id="nationality" class="border-none" readonly>
+        <div>
+          <label for="birthplace">Birthplace</label>
+          <textarea id="birthplace" class="border-none" readonly></textarea>
+          
+          <label for="cemetery">Cemetery</label>
+          <textarea id="cemetery" class="border-none" readonly></textarea>
+        </div>
 
         <label for="education">Education</label>
         <textarea id="education" class="border-none" readonly></textarea>
@@ -164,9 +179,6 @@
 
         <label for="biography">Biography</label>
         <textarea id="biography" class="border-none" readonly></textarea>
-
-        <label for="cemetery">Cemetery</label>
-        <textarea id="cemetery" class="border-none" readonly></textarea>
       </div>
     </div>
 
