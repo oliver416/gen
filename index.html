@@ -4,15 +4,17 @@
   <head>
     <style>
       body {
-        font: 10px sans-serif;
+        font: 14px sans-serif;
         background-color: rgba(174, 172, 204, 0.836);
       }
 
       input {
+        margin: 5px;
         background-color: rgba(174, 172, 204, 0.836);
       }
 
       textarea {
+        margin: 5px;
         background-color: rgba(174, 172, 204, 0.836);
       }
 
@@ -58,14 +60,24 @@
         width: 100%;
       }
 
+      .w50 {
+        width: 50%;
+      }
+
       .h100 {
         height: 100%;
       }
 
+      .wrap {
+        flex-wrap: wrap;
+      }
+
+      .nowrap {
+        flex-wrap: nowrap;
+      }
+
       .main {
-        position: absolute;
         height: 100%;
-        left: 0;
         cursor: default;
       }
 
@@ -94,10 +106,33 @@
         left: 50%;
         top: 0;
         width: 50%;
-        display: grid;
+        display: flex;
+        flex-direction: column;
         height: 100%;
         overflow-y: auto;
         background-color: rgba(174, 172, 204, 0.836);
+      }
+
+      #education {
+        width: 400px;
+        height: 50px;
+      }
+
+      #biography {
+        width: 400px;
+        height: 200px;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: row; 
+      }
+
+      .form-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 5px;
       }
     </style>
   </head>
@@ -106,79 +141,111 @@
       <div id="graph" class="h100"></div>
 
       <div id="editForm" class="visible">
-        <div class="menu w100">
-          <input type="file" id="selectFile" value="Open"/>
-          <button id="exportButton">Export</button>
-          <button id="editButton">Edit</button>
-          <button id="updateButton" class="hidden">Update</button>
-          <button id="addButton" class="hidden">Add</button>
-          <button id="deleteButton" class="hidden">Delete</button>
+        <div class="container">
+          <div class="w50">
+            <div class="form-row nowrap">
+              <input type="file" id="selectFile" value="Open"/>
+              <button id="exportButton">Export</button>
+            </div>
+
+            <div class="form-row">
+              <button id="editButton">Edit</button>
+              <button id="updateButton" class="hidden">Update</button>
+              <button id="addButton" class="hidden">Add</button>
+              <button id="deleteButton" class="hidden">Delete</button>
+            </div>
+            
+            <div class="form-row">
+              <label for="name">Name</label>
+              <input type="text" id="name" class="border-none" readonly>
+            </div>
+            
+            <div class="form-row">
+              <label for="surname">Surname</label>
+              <input type="text" id="surname" class="border-none" readonly>
+            </div>
+
+            <div class="form-row">
+              <label for="birthdate">Birthdate</label>
+              <input type="text" id="birthdate" class="border-none" readonly>
+            </div>
+
+            <div class="form-row">
+              <label for="deathdate">Deathdate</label>
+              <input type="text" id="deathdate" class="border-none" readonly>
+            </div>
+            
+            <div class="form-row">
+              <label for="birthplace">Birthplace</label>
+              <textarea id="birthplace" class="border-none" readonly></textarea>
+            </div>
+
+            <div class="form-row">
+              <label for="cemetery">Cemetery</label>
+              <textarea id="cemetery" class="border-none" readonly></textarea>
+            </div>
+          </div>
+
+          <div class="w50">
+            <div class="form-row">
+              <label for="relative">Relative:</label>
+              <select name="relative" id="relative" disabled>
+                <option value="none" selected>-------</option>
+                <option value="parents">Parents</option>
+                <option value="spouse">Spouse</option>
+                <option value="child">Child</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label for="gender">Gender</label>
+              <select name="gender" id="gender" disabled>
+                <option value="man">Man</option>
+                <option value="woman">Woman</option>
+              </select>
+            </div>
+            
+            <div class="form-row wrap">
+              <label for="patronymic">Patronymic</label>
+              <input type="text" id="patronymic" class="border-none" readonly>
+            </div>
+
+            <div class="form-row wrap">
+              <label for="maidenname">Maidenname</label>
+              <input type="text" id="maidenname" class="border-none" readonly>
+            </div>
+            
+            <div class="form-row wrap">
+              <label for="religion">Religion</label>
+              <input type="text" id="religion" class="border-none" readonly>
+            </div>
+
+            <div class="form-row wrap">
+              <label for="nationality">Nationality</label>
+              <input type="text" id="nationality" class="border-none" readonly>
+            </div>
+            
+            <div class="form-row wrap">
+              <label for="occupation">Occupation</label>
+              <textarea id="occupation" class="border-none" readonly></textarea>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label for="relative">Relative:</label>
-          <select name="relative" id="relative" disabled>
-            <option value="none" selected>-------</option>
-            <option value="parents">Parents</option>
-            <option value="spouse">Spouse</option>
-            <option value="child">Child</option>
-          </select>
-
-          <label for="gender">Gender</label>
-          <select name="gender" id="gender" disabled>
-            <option value="man">Man</option>
-            <option value="woman">Woman</option>
-          </select>
+        <div class="container">
+          <div class="form-row">
+            <label for="education">Education</label>
+            <textarea id="education" class="border-none" readonly></textarea>
+          </div>
         </div>
 
-        <div>
-          <label for="name">Name</label>
-          <input type="text" id="name" class="border-none" readonly>
-    
-          <label for="surname">Surname</label>
-          <input type="text" id="surname" class="border-none" readonly>
+        <div class="container">
+          <div class="form-row">
+            <label for="biography">Biography</label>
+            <textarea id="biography" class="border-none" readonly></textarea>
+          </div>
         </div>
-
-        <div>
-          <label for="patronymic">Patronymic</label>
-          <input type="text" id="patronymic" class="border-none" readonly>
-
-          <label for="maidenname">Maidenname</label>
-          <input type="text" id="maidenname" class="border-none" readonly>
-        </div>
-
-        <div>
-          <label for="birthdate">Birthdate</label>
-          <input type="text" id="birthdate" class="border-none" readonly>
-
-          <label for="deathdate">Deathdate</label>
-          <input type="text" id="deathdate" class="border-none" readonly>
-        </div>
-
-        <div>
-          <label for="religion">Religion</label>
-          <input type="text" id="religion" class="border-none" readonly>
-
-          <label for="nationality">Nationality</label>
-          <input type="text" id="nationality" class="border-none" readonly>
-        </div>
-
-        <div>
-          <label for="birthplace">Birthplace</label>
-          <textarea id="birthplace" class="border-none" readonly></textarea>
-          
-          <label for="cemetery">Cemetery</label>
-          <textarea id="cemetery" class="border-none" readonly></textarea>
-        </div>
-
-        <label for="education">Education</label>
-        <textarea id="education" class="border-none" readonly></textarea>
-
-        <label for="occupation">Occupation</label>
-        <textarea id="occupation" class="border-none" readonly></textarea>
-
-        <label for="biography">Biography</label>
-        <textarea id="biography" class="border-none" readonly></textarea>
+        
       </div>
     </div>
 
