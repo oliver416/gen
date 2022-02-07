@@ -518,17 +518,18 @@
         }
       }
       
-      function showElement(element, isVisible) {
+      function showElement(element, isVisible, action) {
           if (typeof element === 'string') {
             element = document.getElementById(element);
           }
 
+          if (action === 'enable') {
+            element.disabled = !isVisible;
+            return;
+          }
+
           element.removeAttribute('class');
           element.classList.add(isVisible ? 'visible': 'hidden');
-      }
-
-      function enableElement(element, isEnabled) {
-        element.disabled = !isEnabled;
       }
 
       function clearForm(form) {
@@ -566,12 +567,12 @@
         let form = document.getElementById('editForm');
         let relative = document.getElementById('relative');
 
-        enableElement(relative, true);
+        showElement(relative, true, 'enable');
         showElement('updateButton', true);
         blockForm(form, false);
 
         if (!selectedNodeId) {
-          enableElement(relative, false);
+          showElement(relative, false, 'enable');
           showElement('addButton', true);
           showElement('updateButton', false);
         }
@@ -605,16 +606,16 @@
         let options = form.getElementsByTagName('option');
 
         for (let option of options) {
-          enableElement(option, true);
+          showElement(option, true, 'enable');
 
           if (values === 'all') {
-            enableElement(relative, false);
+            showElement(relative, false, 'enable');
             continue;
           }
 
           if (values.includes(option.value)) {
             relative.value = 'none';
-            enableElement(option, false);
+            showElement(option, false, 'enable');
           }
         }
       }
@@ -794,7 +795,7 @@
               person['marriages'] = [{'spouse': spouseID, 'children': [selectedNodeId]}];
             } else {
               clearSelectedNodes();
-              enableElement(relative, false);
+              showElement(relative, false, 'enable');
               blockForm(form, true);
               showElement('addButton', false);
               showElement('updateButton', false);
@@ -831,7 +832,7 @@
         let tree = arrayToTree(array);
         loadTree(tree);
 
-        enableElement(relative, false);
+        showElement(relative, false, 'enable');
         blockForm(form, true);
         showElement('addButton', false);
         showElement('updateButton', false);
