@@ -3,7 +3,13 @@
 <html>
   <head>
     <style>
+      html {
+        height: 100%;
+        overflow: hidden;
+      } 
+
       body {
+        height: 100%;
         font: 14px sans-serif;
         background-color: rgba(174, 172, 204, 0.836);
       }
@@ -53,7 +59,8 @@
 
       svg {
         height: 100%;
-        width: 100%;
+        width: 49%;
+        border: double;
       }
 
       .w100 {
@@ -99,7 +106,6 @@
 
       #graph {
         width: 100%;
-        border: double;
       }
 
       #openForm {
@@ -199,6 +205,10 @@
 
           <div class="w50">
             <div class="form-row">
+              <button id="closeButton">Close</button>
+            </div>
+
+            <div class="form-row">
               <label for="relative">Relative:</label>
               <select name="relative" id="relative" disabled>
                 <option value="none" selected>-------</option>
@@ -255,10 +265,6 @@
             <label for="biography">Biography</label>
             <textarea id="biography" class="border-none" readonly></textarea>
           </div>
-        </div>
-
-        <div class="container">
-          <button id="closeButton">Close</button>
         </div>
         
       </div>
