@@ -167,9 +167,9 @@
 
             <div class="form-row">
               <button id="editButton">Edit</button>
-              <button id="updateButton" class="hidden">Update</button>
-              <button id="addButton" class="hidden">Add</button>
-              <button id="deleteButton" class="hidden">Delete</button>
+              <button id="updateButton" disabled>Update</button>
+              <button id="addButton" disabled>Add</button>
+              <button id="deleteButton" disabled>Delete</button>
             </div>
             
             <div class="form-row">
@@ -322,7 +322,7 @@
                 hideOptions(form, ['child']);
               }               
               
-              showElement(form, true);
+              showElement(form, true, 'visible');
               showElement('deleteButton', true);
               clearForm(form);
               fillForm(name, extra);
@@ -397,7 +397,7 @@
           selectedNodeId = undefined;
 
           clearSelectedNodes();
-          showElement(form, true);
+          showElement(form, true, 'visible');
           clearForm(form);
           blockForm(form, true);
           
@@ -529,13 +529,13 @@
             element = document.getElementById(element);
           }
 
-          if (action === 'enable') {
-            element.disabled = !isVisible;
+          if (action === 'visible') {
+            element.removeAttribute('class');
+            element.classList.add(isVisible ? 'visible': 'hidden');
             return;
           }
 
-          element.removeAttribute('class');
-          element.classList.add(isVisible ? 'visible': 'hidden');
+          element.disabled = !isVisible;
       }
 
       function clearForm(form) {
@@ -561,24 +561,24 @@
 
       function openForm() {
         let form = document.getElementById('editForm');
-        showElement(form, true);
+        showElement(form, true, 'visible');
       }
 
       function closeForm() {
         let form = document.getElementById('editForm');
-        showElement(form, false);
+        showElement(form, false, 'visible');
       }
 
       function editForm() {
         let form = document.getElementById('editForm');
         let relative = document.getElementById('relative');
 
-        showElement(relative, true, 'enable');
+        showElement(relative, true);
         showElement('updateButton', true);
         blockForm(form, false);
 
         if (!selectedNodeId) {
-          showElement(relative, false, 'enable');
+          showElement(relative, false);
           showElement('addButton', true);
           showElement('updateButton', false);
         }
@@ -612,16 +612,16 @@
         let options = form.getElementsByTagName('option');
 
         for (let option of options) {
-          showElement(option, true, 'enable');
+          showElement(option, true);
 
           if (values === 'all') {
-            showElement(relative, false, 'enable');
+            showElement(relative, false);
             continue;
           }
 
           if (values.includes(option.value)) {
             relative.value = 'none';
-            showElement(option, false, 'enable');
+            showElement(option, false);
           }
         }
       }
@@ -801,7 +801,7 @@
               person['marriages'] = [{'spouse': spouseID, 'children': [selectedNodeId]}];
             } else {
               clearSelectedNodes();
-              showElement(relative, false, 'enable');
+              showElement(relative, false);
               blockForm(form, true);
               showElement('addButton', false);
               showElement('updateButton', false);
@@ -838,7 +838,7 @@
         let tree = arrayToTree(array);
         loadTree(tree);
 
-        showElement(relative, false, 'enable');
+        showElement(relative, false);
         blockForm(form, true);
         showElement('addButton', false);
         showElement('updateButton', false);
