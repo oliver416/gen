@@ -186,14 +186,14 @@
               <input type="text" id="surname" class="border-none" readonly>
             </div>
 
-            <div class="form-row">
-              <label for="birthdate">Birthdate</label>
-              <input type="text" id="birthdate" class="border-none" readonly>
+            <div class="form-row wrap">
+              <label for="patronymic">Patronymic</label>
+              <input type="text" id="patronymic" class="border-none" readonly>
             </div>
 
-            <div class="form-row">
-              <label for="deathdate">Deathdate</label>
-              <input type="text" id="deathdate" class="border-none" readonly>
+            <div class="form-row wrap">
+              <label for="maidenname">Maidenname</label>
+              <input type="text" id="maidenname" class="border-none" readonly>
             </div>
             
             <div class="form-row">
@@ -230,14 +230,14 @@
               </select>
             </div>
             
-            <div class="form-row wrap">
-              <label for="patronymic">Patronymic</label>
-              <input type="text" id="patronymic" class="border-none" readonly>
+            <div class="form-row">
+              <label for="birthdate">Birthdate</label>
+              <input type="text" id="birthdate" class="border-none" readonly>
             </div>
 
-            <div class="form-row wrap">
-              <label for="maidenname">Maidenname</label>
-              <input type="text" id="maidenname" class="border-none" readonly>
+            <div class="form-row">
+              <label for="deathdate">Deathdate</label>
+              <input type="text" id="deathdate" class="border-none" readonly>
             </div>
             
             <div class="form-row wrap">
@@ -283,7 +283,7 @@
     <script>
       let familyDB = [];
       let selectedNodeId;
-      let baseName;
+      let baseName = 'family.json';
 
       document.getElementById('selectFile').addEventListener('change', loadFile);
       document.getElementById('relative').addEventListener('change', relativeOnChange);
@@ -340,14 +340,6 @@
 
                 if (extra.maidenname) {
                   name = `${name} (${extra.maidenname})`;
-                }
-
-                if (extra.birthdate) {
-                  name = `${name} (${extra.birthdate})`;
-                }
-
-                if (extra.deathdate) {
-                  name = `${name.slice(0, -1)}-${extra.deathdate})`;
                 }
               }
 
@@ -415,6 +407,8 @@
       }
 
       function relativeOnChange(e) {
+        let form = document.getElementById('editForm');
+        clearForm(form);
         showElement('updateButton', true);
         showElement('addButton', false);
       
@@ -792,6 +786,7 @@
         }
 
         let relative = document.getElementById('relative');
+        let gender = document.getElementById('gender');
 
         if (selectedNodeId) {
           let selectedRow = findRow(familyDB, selectedNodeId);
@@ -806,7 +801,7 @@
               let spouse = {
                 'id': spouseID,
                 'name': 'Unknown',
-                'class': 'woman',
+                'class': gender.value,
                 'extra': {'id': spouseID},
               };
               familyDB.push(spouse);
@@ -835,7 +830,7 @@
           
           if (relative.value === 'spouse' && !rowIsSpouse) {
             let spouse = {'spouse': id};
-            person['class'] = 'woman';
+            person['class'] = gender.value;
   
             if (marriages) {
               marriages.push(spouse);
