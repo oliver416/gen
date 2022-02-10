@@ -96,8 +96,12 @@
         visibility: visible;
       }
 
-      .border-none {
+      .border-double {
         border: double;
+      }
+
+      .border-none {
+        border: none;
       }
 
       .selected {
@@ -595,7 +599,13 @@
         let inputs = form.querySelectorAll('input, textarea');
 
         for (let input of inputs) {
+          if (input.id === 'selectFile') {
+            continue; 
+          }
+          
           input.readOnly = isBlocked;
+          input.removeAttribute('class');
+          input.classList.add(isBlocked ? 'border-none': 'border-double');
         }
 
         // TODO: refactor - duplicate logic
@@ -603,6 +613,8 @@
 
         for (let select of selects) {
           select.disabled = isBlocked;
+          select.removeAttribute('class');
+          select.classList.add(isBlocked ? 'border-none': 'border-double');
         }
       }
 
