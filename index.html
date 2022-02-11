@@ -646,7 +646,7 @@
           attributes[textarea.id] = textarea.value;
         }
         
-        attributes['name'] = attributes['name'] ? attributes['name'] : 'Unknown';
+        attributes['name'] = attributes['name'] ? attributes['name'] : '???';
        
         let gender = document.getElementById('gender').value;
         attributes['gender'] = gender ? gender : 'man';
@@ -800,7 +800,7 @@
               let spouseID = uuidv4();
               let spouse = {
                 'id': spouseID,
-                'name': 'Unknown',
+                'name': '???',
                 'class': gender.value,
                 'extra': {'id': spouseID},
               };
