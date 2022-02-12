@@ -332,15 +332,9 @@
               selectedNodeId = extra['id'];
 
               let row = findRow(familyDB, selectedNodeId);
-              let rowIsSpouse = isSpouse(familyDB, selectedNodeId);
               extra['gender'] = row['class'];
              
               showElement('relative', true);
-              hideOptions(form, ['parents', 'spouse']);
-              
-              if (!rowIsSpouse) {
-                hideOptions(form, ['child']);
-              }               
               
               showElement(form, true, 'visible');
               clearForm(form);
@@ -393,8 +387,6 @@
           showElement(form, false, 'visible');
           clearForm(form);
           blockForm(form, true);
-          
-          hideOptions(form, 'all');
         }
       }
 
@@ -561,143 +553,12 @@
         }
       }
 
-      // TODO: refactor - form -> formId
-      function hideOptions(form, values) {
-        let relative = document.getElementById('relative');
-        let options = form.getElementsByTagName('option');
-
-        for (let option of options) {
-          showElement(option, true);
-
-          if (values === 'all') {
-            showElement(relative, false);
-            continue;
-          }
-
-          if (values.includes(option.value)) {
-            relative.value = 'none';
-            showElement(option, false);
-          }
-        }
-      }
-
-      function extractFormData(form) {
-        let inputs = form.getElementsByTagName('input');
-        let textareas = form.getElementsByTagName('textarea');
-      
-        let attributes = {}
-
-        for (let input of inputs) {
-          attributes[input.id] = input.value;
-        }
-
-        for (let textarea of textareas) {
-          attributes[textarea.id] = textarea.value;
-        }
-        
-        attributes['name'] = attributes['name'] ? attributes['name'] : '???';
-       
-        let gender = document.getElementById('gender').value;
-        attributes['gender'] = gender ? gender : 'man';
-        
-        return attributes;
-      }
-
-      function createExtra(id, object) {
-        let extra = {"id": id};
-
-        for (let key in object) {
-          if (key === 'name' || key === 'gender') {
-            continue;
-          }
-
-          extra[key] = object[key];
-        }
-
-        return extra;
-      }
-
       function findRow(db, id) {
         for (let row of db) {
           if (id === row['id']){
             return row;
           }
         }
-      }
-
-      function deleteRow(db, id) {
-        let marriage = findMarriage(db, id, 'marriage');
-
-        if (marriage) {
-          let children = marriage['children'];
-          children.splice(children.indexOf(id), 1);
-
-          if (marriage['spouse'] === id) {
-            let spouse = findMarriage(db, id, 'spouse');
-            let marriages = spouse['marriages'];
-
-            if (marriages.length === 1) {
-              delete spouse['marriages'];
-            }
-
-            marriages.splice(marriages.indexOf(marriage), 1);
-          }
-        }
-
-        let row = findRow(db, id);
-        db.splice(db.indexOf(row), 1);
-
-        return db;
-      }
-
-      function updateRow(db, id, object) {
-        let row = findRow(db, id);
-        
-        row['name'] = object['name'];
-        row['class'] = object['gender'];
-        
-        let rowId = row['extra']['id'];
-
-        let extra = createExtra(id, object);
-        row['extra'] = extra;
-
-        return db;
-      }
-
-      function findMarriage(db, id, returnObject) {
-        for (let row of db) {
-          let marriages = row['marriages'];
-          
-          if (marriages) {
-            for (let marriage of marriages) {
-              if (marriage['spouse'] === id) {
-                if (returnObject === 'spouse') {
-                  return row;
-                }
-
-                return marriage;
-              }
-
-              let children = marriage['children'];
-
-              if (children) {
-                if (children.includes(id)) {
-                  if (returnObject === 'father') {
-                    return row;
-                  }
-                  
-                  if (returnObject === 'marriage') {
-                    return marriage;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      function isSpouse(db, id) {
-        return !!findMarriage(db, id, 'spouse');
       }
     </script>
   </body>
