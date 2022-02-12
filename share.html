@@ -286,11 +286,11 @@
         "extra": {"id": 3}
       }];
       let selectedNodeId;
-      let baseName = 'family.json';
 
       document.getElementById('graph').addEventListener('click', graphOnClick);
 
-      loadTree(familyDB);
+      let tree = arrayToTree(familyDB);
+      loadTree(tree);
 
       function loadTree(tree) {
         document.getElementById('graph').innerHTML = '';
@@ -453,16 +453,6 @@
         return cleanTree(tree);
       }
 
-      function receivedText(e) {
-        try {
-          familyDB = JSON.parse(e.target.result);
-          let tree = arrayToTree(JSON.parse(e.target.result));
-          loadTree(tree);
-        } catch {
-          return;
-        }
-      }
-      
       function showElement(element, isVisible, action) {
           if (typeof element === 'string') {
             element = document.getElementById(element);
