@@ -11,7 +11,6 @@
       body {
         height: 100%;
         font: 14px sans-serif;
-        background-color: rgba(174, 172, 204, 0.836);
       }
 
       input {
@@ -26,12 +25,12 @@
 
       .linage {
         fill: none;
-        stroke: #000;
+        stroke: #009688;
       }
 
       .marriage {
         fill: none;
-        stroke: black;
+        stroke: red;
       }
 
       .man {
@@ -157,7 +156,7 @@
     <div class="main w100">
       <div id="graph" class="h100"></div>
 
-      <div id="editForm" class="visible">
+      <div id="editForm" class="hidden">
         <div class="container">
           <div class="w50">
             <div class="form-row">
@@ -192,24 +191,6 @@
           </div>
 
           <div class="w50">
-            <div class="form-row">
-              <label for="relative">Relative:</label>
-              <select name="relative" id="relative" disabled>
-                <option value="none" selected>-------</option>
-                <option value="parents">Parents</option>
-                <option value="spouse">Spouse</option>
-                <option value="child">Child</option>
-              </select>
-            </div>
-
-            <div class="form-row">
-              <label for="gender">Gender</label>
-              <select name="gender" id="gender" disabled>
-                <option value="man">Man</option>
-                <option value="woman">Woman</option>
-              </select>
-            </div>
-            
             <div class="form-row">
               <label for="birthdate">Birthdate</label>
               <input type="text" id="birthdate" class="border-none" readonly>
@@ -257,8 +238,6 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/d3-dtree/dist/dTree.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
-    <!-- Possible improvement: https://github.com/eligrey/FileSaver.js -->
     
     <script>
       let familyDB = [{
@@ -309,7 +288,6 @@
       let selectedNodeId;
       let baseName = 'family.json';
 
-      document.getElementById('relative').addEventListener('change', relativeOnChange);
       document.getElementById('graph').addEventListener('click', graphOnClick);
 
       loadTree(familyDB);
@@ -331,15 +309,9 @@
               node.classList.add('selected');
               selectedNodeId = extra['id'];
 
-              let row = findRow(familyDB, selectedNodeId);
-              extra['gender'] = row['class'];
-             
-              showElement('relative', true);
-              
               showElement(form, true, 'visible');
               clearForm(form);
               fillForm(name, extra);
-              blockForm(form, true);
             },
             textRenderer: function(name, extra, textClass) {
               if (extra) {
@@ -379,20 +351,12 @@
       function graphOnClick(e) {
         if (e.target.tagName === 'svg') {
           let form = document.getElementById('editForm');
-          let relative = document.getElementById('relative');
-          relative.value = 'none';
           selectedNodeId = undefined;
 
           clearSelectedNodes();
           showElement(form, false, 'visible');
           clearForm(form);
-          blockForm(form, true);
         }
-      }
-
-      function relativeOnChange(e) {
-        let form = document.getElementById('editForm');
-        clearForm(form);
       }
 
       function arrayToTree(array) {
@@ -530,33 +494,6 @@
               continue;
             }
             document.getElementById(key).value = data[key];
-          }
-        }
-      }
-
-      function blockForm(form, isBlocked) {
-        let inputs = form.querySelectorAll('input, textarea');
-
-        for (let input of inputs) {
-          input.readOnly = isBlocked;
-          input.removeAttribute('class');
-          input.classList.add(isBlocked ? 'border-none': 'border-double');
-        }
-
-        // TODO: refactor - duplicate logic
-        let selects = form.querySelectorAll('select');
-
-        for (let select of selects) {
-          select.disabled = isBlocked;
-          select.removeAttribute('class');
-          select.classList.add(isBlocked ? 'border-none': 'border-double');
-        }
-      }
-
-      function findRow(db, id) {
-        for (let row of db) {
-          if (id === row['id']){
-            return row;
           }
         }
       }
