@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <style>
+      html {
+        height: 100%;
+        overflow: hidden;
+      } 
+
+      body {
+        height: 100%;
+        font: 14px sans-serif;
+        background-color: rgba(174, 172, 204, 0.836);
+      }
+
+      input {
+        margin: 5px;
+        background-color: rgba(174, 172, 204, 0.836);
+      }
+
+      textarea {
+        margin: 5px;
+        background-color: rgba(174, 172, 204, 0.836);
+      }
+
+      .linage {
+        fill: none;
+        stroke: #000;
+      }
+
+      .marriage {
+        fill: none;
+        stroke: black;
+      }
+
+      .man {
+        background-color: lightblue;
+        border-style: solid;
+        border-width: 1px;
+        box-sizing: border-box;
+      }
+
+      .woman {
+        background-color: salmon;
+        border-style: solid;
+        border-width: 1px;
+        box-sizing: border-box;
+      }
+
+      .emphasis {
+        font-style: italic;
+      }
+
+      p {
+        padding:0;
+        margin:0;
+      }
+
+      svg {
+        height: 100%;
+        width: 100%;
+        border: double;
+      }
+
+      .w100 {
+        width: 100%;
+      }
+
+      .w50 {
+        width: 50%;
+      }
+
+      .h100 {
+        height: 100%;
+      }
+
+      .wrap {
+        flex-wrap: wrap;
+      }
+
+      .nowrap {
+        flex-wrap: nowrap;
+      }
+
+      .main {
+        height: 100%;
+        cursor: default;
+      }
+
+      .hidden {
+        visibility: hidden;
+      }
+
+      .visible {
+        visibility: visible;
+      }
+
+      .border-double {
+        border: double;
+      }
+
+      .border-none {
+        border: none;
+      }
+
+      .selected {
+        opacity: 50%;
+      }
+
+      #graph {
+        width: 100%;
+      }
+
+      #openForm {
+        position: absolute;
+        right: 5%;
+        top: 5%;
+      }
+
+      #editForm {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow-y: auto;
+        background-color: rgba(174, 172, 204, 1);
+      }
+
+      #education {
+        width: 400px;
+        height: 50px;
+      }
+
+      #biography {
+        width: 400px;
+        height: 200px;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: row; 
+      }
+
+      .form-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main w100">
+      <div id="graph" class="h100"></div>
+
+      <div id="editForm" class="visible">
+        <div class="container">
+          <div class="w50">
+            <div class="form-row">
+              <label for="surname">Surname</label>
+              <input type="text" id="surname" class="border-none" readonly>
+            </div>
+
+            <div class="form-row">
+              <label for="name">Name</label>
+              <input type="text" id="name" class="border-none" readonly>
+            </div>
+
+            <div class="form-row wrap">
+              <label for="patronymic">Patronymic</label>
+              <input type="text" id="patronymic" class="border-none" readonly>
+            </div>
+
+            <div class="form-row wrap">
+              <label for="maidenname">Maidenname</label>
+              <input type="text" id="maidenname" class="border-none" readonly>
+            </div>
+            
+            <div class="form-row">
+              <label for="birthplace">Birthplace</label>
+              <textarea id="birthplace" class="border-none" readonly></textarea>
+            </div>
+
+            <div class="form-row">
+              <label for="cemetery">Cemetery</label>
+              <textarea id="cemetery" class="border-none" readonly></textarea>
+            </div>
+          </div>
+
+          <div class="w50">
+            <div class="form-row">
+              <label for="relative">Relative:</label>
+              <select name="relative" id="relative" disabled>
+                <option value="none" selected>-------</option>
+                <option value="parents">Parents</option>
+                <option value="spouse">Spouse</option>
+                <option value="child">Child</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label for="gender">Gender</label>
+              <select name="gender" id="gender" disabled>
+                <option value="man">Man</option>
+                <option value="woman">Woman</option>
+              </select>
+            </div>
+            
+            <div class="form-row">
+              <label for="birthdate">Birthdate</label>
+              <input type="text" id="birthdate" class="border-none" readonly>
+            </div>
+
+            <div class="form-row">
+              <label for="deathdate">Deathdate</label>
+              <input type="text" id="deathdate" class="border-none" readonly>
+            </div>
+            
+            <div class="form-row wrap">
+              <label for="religion">Religion</label>
+              <input type="text" id="religion" class="border-none" readonly>
+            </div>
+
+            <div class="form-row wrap">
+              <label for="nationality">Nationality</label>
+              <input type="text" id="nationality" class="border-none" readonly>
+            </div>
+            
+            <div class="form-row wrap">
+              <label for="occupation">Occupation</label>
+              <textarea id="occupation" class="border-none" readonly></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="container">
+          <div class="form-row">
+            <label for="education">Education</label>
+            <textarea id="education" class="border-none" readonly></textarea>
+          </div>
+        </div>
+
+        <div class="container">
+          <div class="form-row">
+            <label for="biography">Biography</label>
+            <textarea id="biography" class="border-none" readonly></textarea>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-dtree/dist/dTree.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
+    <!-- Possible improvement: https://github.com/eligrey/FileSaver.js -->
+    
+    <script>
+      let familyDB = [{
+        "id": 2,
+        "name": "Helen",
+        "class": "woman",
+        "extra": {
+          "id": 2,
+          "surname": "Hell",
+          "patronymic": null,
+          "maidenname": "Buiova",
+          "birthdate": "01.01.1950",
+          "deathdate": "01.01.1990",
+          "birthplace": "Moscow, Russian Federation",
+          "religion": "ortodox (baptized)",
+          "nationality": "Russian",
+          "education": "Moscow high school 1960-1970",
+          "occupation": "Economist",
+          "biography": "-",
+          "cemetery": "Vagankovskoe cemetery, st.10, p.17"
+        } 
+      },
+      {
+        "id": 1,
+        "name": "Niclas Superlongsurname",
+        "class": "man",
+        "textClass": "emphasis",
+        "extra": {"id": 1},
+        "marriages": [
+          {"spouse": 2, "children": [3]}
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Alexandra",
+        "class": "woman",
+        "extra": {"id": 4}
+      },
+      {
+        "id": 3,
+        "name": "James",
+        "class": "man",
+        "marriages": [
+          {"spouse": 4, "children": [5,6,7,8,9,10]}
+        ],
+        "extra": {"id": 3}
+      }];
+      let selectedNodeId;
+      let baseName = 'family.json';
+
+      document.getElementById('relative').addEventListener('change', relativeOnChange);
+      document.getElementById('graph').addEventListener('click', graphOnClick);
+
+      loadTree(familyDB);
+
+      function loadTree(tree) {
+        document.getElementById('graph').innerHTML = '';
+
+        dTree.init(tree, {
+          target: "#graph",
+          debug: true,
+          height: 800,
+          width: 1200,
+          callbacks: {
+            nodeClick: function(name, extra, id) {
+              let form = document.getElementById('editForm');
+              clearSelectedNodes();
+
+              let node = document.getElementById(`node${id}`);
+              node.classList.add('selected');
+              selectedNodeId = extra['id'];
+
+              let row = findRow(familyDB, selectedNodeId);
+              let rowIsSpouse = isSpouse(familyDB, selectedNodeId);
+              extra['gender'] = row['class'];
+             
+              showElement('relative', true);
+              hideOptions(form, ['parents', 'spouse']);
+              
+              if (!rowIsSpouse) {
+                hideOptions(form, ['child']);
+              }               
+              
+              showElement(form, true, 'visible');
+              clearForm(form);
+              fillForm(name, extra);
+              blockForm(form, true);
+            },
+            textRenderer: function(name, extra, textClass) {
+              if (extra) {
+                if (extra.surname) {
+                  name = `${name} ${extra.surname}`;
+                }                
+
+                if (extra.maidenname) {
+                  name = `${name} (${extra.maidenname})`;
+                }
+              }
+
+              return "<p align='center' class='" + textClass + "'>" + name + "</p>";
+            },
+            nodeRenderer: function(name, x, y, height, width, extra, id, nodeClass, textClass, textRenderer) {
+              let node = '';
+              node += '<div ';
+              node += 'style="height:100%;width:100%;" ';
+              node += 'class="' + nodeClass + '" ';
+              node += 'id="node' + id + '">\n';
+              node += textRenderer(name, extra, textClass);
+              node += '</div>';
+              return node;
+          }
+          }
+        });
+      }
+
+      function clearSelectedNodes() {
+        let selectedNodes = document.getElementsByClassName('selected');
+  
+        for (let element of selectedNodes) {
+          element.classList.remove('selected');
+        }
+      }
+
+      function graphOnClick(e) {
+        if (e.target.tagName === 'svg') {
+          let form = document.getElementById('editForm');
+          let relative = document.getElementById('relative');
+          relative.value = 'none';
+          selectedNodeId = undefined;
+
+          clearSelectedNodes();
+          showElement(form, false, 'visible');
+          clearForm(form);
+          blockForm(form, true);
+          
+          hideOptions(form, 'all');
+        }
+      }
+
+      function relativeOnChange(e) {
+        let form = document.getElementById('editForm');
+        clearForm(form);
+      }
+
+      function arrayToTree(array) {
+        function findParentNode(tree, nodeId) {
+          for (let node of tree) {
+            if (
+                nodeId === node['spouse'] || 
+                nodeId === node
+              ) {
+              return node;
+            }
+
+            let marriages = node['marriages'];
+            let children = node['children'];
+
+            if (marriages) {
+              let parentNode = findParentNode(marriages, nodeId);
+              if (parentNode) {
+                return parentNode;
+              }
+            }
+
+            if (children) {
+              if (children.includes(nodeId)) {
+                return node;
+              } else {
+                let parentNode = findParentNode(children, nodeId);
+                if (parentNode) {
+                  return parentNode;
+                }
+              }
+            }
+          }
+        }
+
+        function addNode(parentNode, node) {
+          if (!parentNode) {
+            return false;
+          } 
+          
+          let nodeId = node['id'];    
+          let spouse = parentNode['spouse'];
+          let children = parentNode['children'];   
+          
+          if (spouse === nodeId) {
+            parentNode['spouse'] = node;
+            return true;
+          }
+
+          if (children) {
+            for (child of children) {
+              if (child === nodeId) {
+                parentNode['children'][children.indexOf(child)] = node;
+                return true;
+              }
+            }
+          }
+        }
+
+        function cleanTree(tree) {
+          let cleaned_tree = [];
+
+          for (let node of tree) {
+            let nodeId = node['id'];
+            let parentNode = findParentNode(tree, nodeId);
+
+            if (parentNode) {
+              let is_added = addNode(parentNode, node);
+            } else {
+              cleaned_tree.push(node);
+            }
+          }
+
+          return cleaned_tree;
+        }
+
+        let tree;
+        for (let node of array) {
+          if (!tree){
+            tree = [node];
+            continue;
+          }
+
+          let nodeId = node['id'];          
+          parentNode = findParentNode(tree, nodeId);
+          is_added = addNode(parentNode, node);
+
+          if (!is_added) {
+            tree.push(node);
+            continue;
+          }
+        }
+        
+        return cleanTree(tree);
+      }
+
+      function receivedText(e) {
+        try {
+          familyDB = JSON.parse(e.target.result);
+          let tree = arrayToTree(JSON.parse(e.target.result));
+          loadTree(tree);
+        } catch {
+          return;
+        }
+      }
+      
+      function showElement(element, isVisible, action) {
+          if (typeof element === 'string') {
+            element = document.getElementById(element);
+          }
+
+          if (action === 'visible') {
+            element.removeAttribute('class');
+            element.classList.add(isVisible ? 'visible': 'hidden');
+            return;
+          }
+
+          element.disabled = !isVisible;
+      }
+
+      function clearForm(form) {
+        let nodes = form.querySelectorAll('input, textarea');
+
+        for (let node of nodes) {
+          node.value = '';
+        }
+      }
+
+      function fillForm(name, data) {
+        document.getElementById('name').value = name;
+
+        if (data) {
+          for (let key in data) {
+            if (key === 'id') {
+              continue;
+            }
+            document.getElementById(key).value = data[key];
+          }
+        }
+      }
+
+      function blockForm(form, isBlocked) {
+        let inputs = form.querySelectorAll('input, textarea');
+
+        for (let input of inputs) {
+          input.readOnly = isBlocked;
+          input.removeAttribute('class');
+          input.classList.add(isBlocked ? 'border-none': 'border-double');
+        }
+
+        // TODO: refactor - duplicate logic
+        let selects = form.querySelectorAll('select');
+
+        for (let select of selects) {
+          select.disabled = isBlocked;
+          select.removeAttribute('class');
+          select.classList.add(isBlocked ? 'border-none': 'border-double');
+        }
+      }
+
+      // TODO: refactor - form -> formId
+      function hideOptions(form, values) {
+        let relative = document.getElementById('relative');
+        let options = form.getElementsByTagName('option');
+
+        for (let option of options) {
+          showElement(option, true);
+
+          if (values === 'all') {
+            showElement(relative, false);
+            continue;
+          }
+
+          if (values.includes(option.value)) {
+            relative.value = 'none';
+            showElement(option, false);
+          }
+        }
+      }
+
+      function extractFormData(form) {
+        let inputs = form.getElementsByTagName('input');
+        let textareas = form.getElementsByTagName('textarea');
+      
+        let attributes = {}
+
+        for (let input of inputs) {
+          attributes[input.id] = input.value;
+        }
+
+        for (let textarea of textareas) {
+          attributes[textarea.id] = textarea.value;
+        }
+        
+        attributes['name'] = attributes['name'] ? attributes['name'] : '???';
+       
+        let gender = document.getElementById('gender').value;
+        attributes['gender'] = gender ? gender : 'man';
+        
+        return attributes;
+      }
+
+      function createExtra(id, object) {
+        let extra = {"id": id};
+
+        for (let key in object) {
+          if (key === 'name' || key === 'gender') {
+            continue;
+          }
+
+          extra[key] = object[key];
+        }
+
+        return extra;
+      }
+
+      function findRow(db, id) {
+        for (let row of db) {
+          if (id === row['id']){
+            return row;
+          }
+        }
+      }
+
+      function deleteRow(db, id) {
+        let marriage = findMarriage(db, id, 'marriage');
+
+        if (marriage) {
+          let children = marriage['children'];
+          children.splice(children.indexOf(id), 1);
+
+          if (marriage['spouse'] === id) {
+            let spouse = findMarriage(db, id, 'spouse');
+            let marriages = spouse['marriages'];
+
+            if (marriages.length === 1) {
+              delete spouse['marriages'];
+            }
+
+            marriages.splice(marriages.indexOf(marriage), 1);
+          }
+        }
+
+        let row = findRow(db, id);
+        db.splice(db.indexOf(row), 1);
+
+        return db;
+      }
+
+      function updateRow(db, id, object) {
+        let row = findRow(db, id);
+        
+        row['name'] = object['name'];
+        row['class'] = object['gender'];
+        
+        let rowId = row['extra']['id'];
+
+        let extra = createExtra(id, object);
+        row['extra'] = extra;
+
+        return db;
+      }
+
+      function findMarriage(db, id, returnObject) {
+        for (let row of db) {
+          let marriages = row['marriages'];
+          
+          if (marriages) {
+            for (let marriage of marriages) {
+              if (marriage['spouse'] === id) {
+                if (returnObject === 'spouse') {
+                  return row;
+                }
+
+                return marriage;
+              }
+
+              let children = marriage['children'];
+
+              if (children) {
+                if (children.includes(id)) {
+                  if (returnObject === 'father') {
+                    return row;
+                  }
+                  
+                  if (returnObject === 'marriage') {
+                    return marriage;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      function isSpouse(db, id) {
+        return !!findMarriage(db, id, 'spouse');
+      }
+    </script>
+  </body>
+</html>
